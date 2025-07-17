@@ -1,41 +1,28 @@
+rockspec_format = "3.0"
 package = "p4lua"
 version = "0.1-1"
 source = {
-   url = "*** please add URL for source tarball, zip or repository here ***"
+   url = "git+https://github.com/phi4grv/p4lua.git"
 }
 description = {
-   homepage = "*** please enter a project homepage ***",
-   license = "*** please specify a license ***"
+   homepage = "https://github.com/phi4grv/p4lua",
+   license = "MIT"
 }
 dependencies = {
    "lua >= 5.1, < 5.5",
-   queries = {
-      {
-         constraints = {
-            {
-               op = ">=",
-               version = {
-                  5, 1, string = "5.1"
-               }
-            },
-            {
-               op = "<",
-               version = {
-                  5, 5, string = "5.5"
-               }
-            }
-         },
-         name = "lua"
-      }
-   }
 }
 build_dependencies = {
-   queries = {}
+   "inspect >= 3.1.0"
 }
 build = {
    type = "builtin",
-   modules = {}
+   modules = {
+      ["p4lua.debug"] = "src/p4lua/debug.lua"
+   }
 }
 test_dependencies = {
-   queries = {}
+   "busted >= 2.2.0",
+}
+test = {
+   type = "busted",
 }
