@@ -12,12 +12,14 @@ dependencies = {
    "lua >= 5.1, < 5.5",
 }
 build_dependencies = {
-   "inspect >= 3.1.0"
+   "inspect >= 3.1.0",
+   "p4lua_rust >= 0.1",
 }
 build = {
    type = "builtin",
    modules = {
-      ["p4lua.debug"] = "src/p4lua/debug.lua"
+      ["p4lua.debug"] = "src/p4lua/debug.lua",
+      ["p4lua.hash"] = "src/p4lua/hash.lua",
    }
 }
 test_dependencies = {
