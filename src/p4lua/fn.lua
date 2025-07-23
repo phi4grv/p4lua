@@ -14,4 +14,8 @@ pub.compose = function(...)
     end
 end
 
+pub.compose_table = function(t)
+    return pub.compose(table.unpack(t))
+end
+
 return pub

@@ -1,27 +1,40 @@
 local p4fn = require("p4lua.fn")
 
-describe("p4lua.fn.compose", function()
-    local add1 = function(x) return x + 1 end
-    local mul2 = function(x) return x * 2 end
-    local square = function(x) return x ^ 2 end
+local add1 = function(x) return x + 1 end
+local mul2 = function(x) return x * 2 end
+local square = function(x) return x ^ 2 end
 
-    it("should compose two functions", function()
-        local f = p4fn.compose(mul2, add1)
-        assert.equals(4, f(1))
-    end)
+local test_cases = {
+    {
+        name = "p4lua.fn.compose",
+        apply = function(...) return p4fn.compose(...) end
+    },
+    {
+        name = "p4lua.fn.compose_table",
+        apply = function(...) return p4fn.compose_table({ ... }) end
+    }
+}
 
-    it("should compose three functions", function()
-        local f = p4fn.compose(square, mul2, add1)
-        assert.equals(16, f(1))
-    end)
+for _, case in ipairs(test_cases) do
+    describe(case.name, function()
+        it("should compose two functions", function()
+            local f = case.apply(mul2, add1)
+            assert.equals(4, f(1))
+        end)
 
-    it("returns identity when no functions given", function()
-        local f = p4fn.compose()
-        assert.equals("identity", f("identity"))
-    end)
+        it("should compose three functions", function()
+            local f = case.apply(square, mul2, add1)
+            assert.equals(16, f(1))
+        end)
 
-    it("works with single function", function()
-        local f = p4fn.compose(add1)
-        assert.equals(2, f(1))
+        it("returns identity when no functions given", function()
+            local f = case.apply()
+            assert.equals("identity", f("identity"))
+        end)
+
+        it("works with single function", function()
+            local f = case.apply(add1)
+            assert.equals(2, f(1))
+        end)
     end)
-end)
+end
