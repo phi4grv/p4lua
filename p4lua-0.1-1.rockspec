@@ -17,7 +17,8 @@ build_dependencies = {
 build = {
    type = "builtin",
    modules = {
-      ["p4lua.debug"] = "src/p4lua/debug.lua"
+      ["p4lua.debug"] = "src/p4lua/debug.lua",
+      ["p4lua.fn"] = "src/p4lua/fn.lua",
    }
 }
 test_dependencies = {
