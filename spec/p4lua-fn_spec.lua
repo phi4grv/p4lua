@@ -38,3 +38,47 @@ for _, case in ipairs(test_cases) do
         end)
     end)
 end
+
+describe("p4lua.fn.curry", function()
+    local function add0() return "add0" end
+    local function add1(a) return a end
+    local function add2(a, b) return a + b end
+    local function add3(a, b, c) return a + b + c end
+
+    it("should curry a function with 0 arguments", function()
+        local f = p4fn.curry(add0, 0)
+        assert.equals("add0", f())
+    end)
+
+    it("should curry a function with 1 arguments", function()
+        local f = p4fn.curry(add1, 1)
+        assert.equals(1, f(1))
+    end)
+
+    it("should curry a function with 2 arguments", function()
+        local f = p4fn.curry(add2, 2)
+        assert.equals(3, f(1)(2))
+    end)
+
+    it("should curry a function with three arguments", function()
+        local f = p4fn.curry(add3)
+        assert.equals(6, f(1)(2)(3))
+    end)
+
+    it("should allow partial application", function()
+        local f = p4fn.curry(add3)
+        assert.equals(6, f(1, 2)(3))
+        assert.equals(6, f(1)(2, 3))
+        assert.equals(6, f(1, 2, 3))
+    end)
+    --
+    it("should work when arity is explicitly specified", function()
+        local function varargs(...)
+            local sum = 0
+            for _, v in ipairs({...}) do sum = sum + v end
+            return sum
+        end
+        local f = p4fn.curry(varargs, 3)
+        assert.equals(6, f(1)(2)(3))
+    end)
+end)
