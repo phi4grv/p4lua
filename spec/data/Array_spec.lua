@@ -1,3 +1,6 @@
+local Map = require("p4lua.data.Map")
+local assert = Map.filterByKeys(assert, { "are", "equals", "is_true", "is_false" }) -- suppress LSP warning
+
 local Array = require("p4lua.data.Array")
 
 describe("p4lua.data.Array.new", function()
