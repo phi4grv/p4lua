@@ -32,3 +32,38 @@ describe("filterByKeys function", function()
     end)
 
 end)
+
+describe("Map.valuesByKeys function", function()
+
+    it("returns values for given keys in order", function()
+        local m = { a = 1, b = 2, c = 3 }
+        local keys = { "b", "c" }
+
+        local vals = Map.valuesByKeys(m, keys)
+        assert.are.same({ 2, 3 }, vals)
+    end)
+
+    it("ignores keys not present in the map", function()
+        local m = { a = 1, b = 2 }
+        local keys = { "b", "x", "a" }
+
+        local vals = Map.valuesByKeys(m, keys)
+        assert.are.same({ 2, 1 }, vals)
+    end)
+
+    it("returns empty array if keys list is empty", function()
+        local m = { a = 1 }
+        local keys = {}
+
+        local vals = Map.valuesByKeys(m, keys)
+        assert.are.same({}, vals)
+    end)
+
+    it("returns empty array if map is empty", function()
+        local m = {}
+        local keys = { "a", "b" }
+
+        local vals = Map.valuesByKeys(m, keys)
+        assert.are.same({}, vals)
+    end)
+end)
