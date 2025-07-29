@@ -20,6 +20,7 @@ local test_cases = {
 
 for _, case in ipairs(test_cases) do
     describe(case.name, function()
+
         it("should compose two functions", function()
             local f = case.apply(mul2, add1)
             assert.equals(4, f(1))
@@ -39,6 +40,7 @@ for _, case in ipairs(test_cases) do
             local f = case.apply(add1)
             assert.equals(2, f(1))
         end)
+
     end)
 end
 
@@ -87,6 +89,7 @@ describe("p4lua.fn.curry", function()
 end)
 
 describe("p4lua.fn.const function", function()
+
     it("should always return the first argument", function()
         local f = p4fn.const("first")
         assert.are.equal(f("second"), "first")
@@ -100,4 +103,18 @@ describe("p4lua.fn.const function", function()
         local f = p4fn.const(t)
         assert.are.equal(f("arg1", "arg2", "arg3"), t)
     end)
+
+end)
+
+describe("p4lua.fn.id function", function()
+
+    it("returns the input value unchanged", function()
+        assert.are.equal(5, p4fn.id(5))
+        assert.are.equal("hello", p4fn.id("hello"))
+        assert.are.equal(true, p4fn.id(true))
+
+        local tbl = { a = 1 }
+        assert.are.same(tbl, p4fn.id(tbl))
+    end)
+
 end)

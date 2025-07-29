@@ -43,4 +43,6 @@ pub.curry = function(fn, arity)
     return curried
 end
 
+pub.id = function(x) return x end
+
 return pub
