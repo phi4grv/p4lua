@@ -14,12 +14,11 @@ pub.filterByKeys = function(m, ks)
     return result
 end
 
+-- TODO: return [Maybe a]
 pub.valuesByKeys = function(m, ks)
     local result = {}
-    for _, k in ipairs(ks) do
-        if m[k] ~= nil then
-            table.insert(result, m[k])
-        end
+    for i, k in ipairs(ks) do
+        result[i] =  m[k]
     end
     return result
 end
