@@ -14,6 +14,16 @@ pub.filterByKeys = function(m, ks)
     return result
 end
 
+pub.values = function(m)
+    local result = {}
+    for _, v in pairs(m) do
+        if v ~= nil then
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+
 -- TODO: return [Maybe a]
 pub.valuesByKeys = function(m, ks)
     local result = {}

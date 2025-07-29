@@ -33,6 +33,35 @@ describe("filterByKeys function", function()
 
 end)
 
+describe("Map.values", function()
+
+    it("returns an empty array when the table is empty", function()
+        local vs = Map.values({})
+        assert.are.same({}, vs)
+    end)
+
+    it("returns all values from a map", function()
+        local vs = Map.values({ a = 10, b = 20, c = 30 })
+
+        table.sort(vs) -- to ignore order
+        assert.are.same({10, 20, 30}, vs)
+    end)
+
+    it("returns all non-nil values from a map", function()
+        local vs = Map.values({ a = 1, b = nil, c = 2 })
+
+        table.sort(vs) -- to ignore order
+        assert.are.same({1, 2}, vs)
+    end)
+
+    it("returns an empty array when all values are nil", function()
+        local vs = Map.values({ a = nil, b = nil })
+
+        assert.are.same({}, vs)
+    end)
+
+end)
+
 describe("Map.valuesByKeys function", function()
 
     it("returns values for given keys in order", function()
