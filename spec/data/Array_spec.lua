@@ -64,3 +64,76 @@ describe("p4lua.data.Array.isEmpty", function()
     end)
 
 end)
+
+describe("p4lua.data.Array.zipWith", function()
+
+    describe("p4lua.data.Array.zipWith with single parameter functions", function()
+        local add1 = function(x) return x + 1 end
+        local mul2 = function(x) return x * 2 end
+        local square = function(x) return x ^ 2 end
+
+        it("applies functions to corresponding elements", function()
+            local fs = { add1, mul2, square }
+            local values = { 1, 2, 3 }
+
+            local result = Array.zipWith(fs, values)
+            assert.are.same({ 2, 4, 9 }, result)
+        end)
+
+        it("returns empty if either list is empty", function()
+            local fs = {}
+            local values = {1, 2, 3}
+
+            local result = Array.zipWith(fs, values)
+            assert.are.same({}, result)
+
+            result = Array.zipWith(values, {})
+            assert.are.same({}, result)
+        end)
+
+        it("stops at the shorter list length", function()
+            local fs = { add1, mul2 }
+            local values = { 1, 2, 3, 4 }
+
+            local result = Array.zipWith(fs, values)
+            assert.are.same({ 2, 4 }, result)
+        end)
+    end)
+
+    describe("p4lua.data.Array.zipWith with two parameter functions", function()
+        local add = function(a, b) return a + b end
+        local mul = function(a, b) return a * b end
+        local sub = function(a, b) return a - b end
+
+        it("applies each function to corresponding elements from two arrays", function()
+            local fs = { add, mul, sub }
+            local a1 = { 1, 2, 3 }
+            local a2 = { 4, 5, 6 }
+
+            local result = Array.zipWith(fs, a1, a2)
+            assert.are.same({ 5, 10, -3 }, result)
+        end)
+
+        it("returns empty if any array is empty", function()
+            local fs = { add }
+            local a1 = {}
+            local a2 = { 1 }
+
+            local result = Array.zipWith(fs, a1, a2)
+            assert.are.same({}, result)
+
+            result = Array.zipWith(fs, {1}, {})
+            assert.are.same({}, result)
+        end)
+
+        it("stops at the shortest array length", function()
+            local fs = { add, mul }
+            local a1 = { 1, 2, 3 }
+            local a2 = { 4, 5 }
+
+            local result = Array.zipWith(fs, a1, a2)
+            assert.are.same({ 5, 10 }, result)
+        end)
+    end)
+
+end)
