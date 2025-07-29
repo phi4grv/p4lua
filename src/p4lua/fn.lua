@@ -20,6 +20,12 @@ pub.compose_table = function(t)
     return pub.compose(table.unpack(t))
 end
 
+pub.const = function(x)
+    return function(...)
+        return x
+    end
+end
+
 pub.curry = function(fn, arity)
     arity = arity or debug.getinfo(fn, "u").nparams or 1
     local function curried(...)
