@@ -43,12 +43,12 @@ describe("Map.valuesByKeys function", function()
         assert.are.same({ 2, 3 }, vals)
     end)
 
-    it("ignores keys not present in the map", function()
+    it("return nil if keys not exists in the map", function()
         local m = { a = 1, b = 2 }
-        local keys = { "b", "x", "a" }
+        local keys = { "b", "not exists", "a" }
 
         local vals = Map.valuesByKeys(m, keys)
-        assert.are.same({ 2, 1 }, vals)
+        assert.are.same({ 2, nil, 1 }, vals)
     end)
 
     it("returns empty array if keys list is empty", function()

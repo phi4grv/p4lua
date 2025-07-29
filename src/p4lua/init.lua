@@ -1,14 +1,19 @@
-local Map = require("p4lua.data.Map")
-local Array = require("p4lua.data.Array")
+require("p4lua.compat")
 
 local pub = {}
 
 pub.require = function(mod, ks)
     local m = require(mod)
-    if not Array.isEmpty(ks) then
-        return table.unpack(Map.valuesByKeys(m, ks))
+
+    if not ks then
+        return m
     end
-    return m
+
+    local result = {}
+    for i, k in ipairs(ks) do
+        result[i] = m[k] -- include nil
+    end
+    return table.unpack(result, 1, #ks)
 end
 
 return pub
