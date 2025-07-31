@@ -1,6 +1,15 @@
+local p4tbl = require("p4lua.table")
+local Array = require("p4lua.data.Array")
+
 local pub = {}
 
 local function createCtor(typeName, tag, keys)
+    if (Array.isEmpty(keys)) then
+        local value = p4tbl.makeReadOnly({ _tag = tag })
+        return function()
+            return value
+        end
+    end
     return function(...)
         local args = table.pack(...)
         if args.n ~= #keys then

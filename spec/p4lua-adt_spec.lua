@@ -77,4 +77,10 @@ describe("Sum Types", function()
         assert.is_not_nil(err)
     end)
 
+    it("should return a singleton for constructors with no values", function()
+        local a = ASumType.NoKey()
+        local b = ASumType.NoKey()
+        assert.is_true(a == b)
+    end)
+
 end)
