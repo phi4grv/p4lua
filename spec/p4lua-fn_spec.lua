@@ -43,6 +43,24 @@ for _, case in ipairs(test_cases) do
     end)
 end
 
+describe("p4lua.fn.const function", function()
+
+    it("should always return the first argument", function()
+        local f = p4fn.const("first")
+        assert.are.equal(f("second"), "first")
+        assert.are.equal(f(1), "first")
+        assert.are.equal(f(nil), "first")
+        assert.are.equal(f({}), "first")
+    end)
+
+    it("should works with vargs", function()
+        local t = { a = 1 }
+        local f = p4fn.const(t)
+        assert.are.equal(f("arg1", "arg2", "arg3"), t)
+    end)
+
+end)
+
 describe("p4lua.fn.curry", function()
     local function add0() return "add0" end
     local function add1(a) return a end
@@ -95,24 +113,6 @@ describe("p4lua.fn.curry", function()
         -- Problem: if `add1` shares `args` internally, the next result won't be 4
         assert.same(4, add1(3))  -- Expected: 1 + 3 = 4
         -- If implemented incorrectly, this might become 1 + 2 + 3 = 6 (which is wrong)
-    end)
-
-end)
-
-describe("p4lua.fn.const function", function()
-
-    it("should always return the first argument", function()
-        local f = p4fn.const("first")
-        assert.are.equal(f("second"), "first")
-        assert.are.equal(f(1), "first")
-        assert.are.equal(f(nil), "first")
-        assert.are.equal(f({}), "first")
-    end)
-
-    it("should works with vargs", function()
-        local t = { a = 1 }
-        local f = p4fn.const(t)
-        assert.are.equal(f("arg1", "arg2", "arg3"), t)
     end)
 
 end)
