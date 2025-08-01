@@ -75,7 +75,7 @@ describe("p4lua.fn.curry", function()
         assert.equals(6, f(1)(2, 3))
         assert.equals(6, f(1, 2, 3))
     end)
-    --
+
     it("should work when arity is explicitly specified", function()
         local function varargs(...)
             local sum = 0
@@ -85,6 +85,18 @@ describe("p4lua.fn.curry", function()
         local f = p4fn.curry(varargs, 3)
         assert.equals(6, f(1)(2)(3))
     end)
+
+    it("should not share args between curried functions", function()
+        local f = p4fn.curry(add2, 2)
+
+        local add1 = f(1)
+        assert.same(3, add1(2))  -- OK: 1 + 2 = 3
+
+        -- Problem: if `add1` shares `args` internally, the next result won't be 4
+        assert.same(4, add1(3))  -- Expected: 1 + 3 = 4
+        -- If implemented incorrectly, this might become 1 + 2 + 3 = 6 (which is wrong)
+    end)
+
 end)
 
 describe("p4lua.fn.const function", function()

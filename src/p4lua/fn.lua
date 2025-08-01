@@ -28,19 +28,29 @@ end
 
 pub.curry = function(fn, arity)
     arity = arity or debug.getinfo(fn, "u").nparams or 1
-    local function curried(...)
-        local args = table.pack(...)
-        if args.n >= arity then
-            return fn(table.unpack(args))
-        end
+
+    local function curried(argsSoFar)
         return function(...)
-            for _, v in ipairs(table.pack(...)) do
-                table.insert(args, v)
+            -- copy previous args to avoid shared mutation
+            local args = {}
+            for i = 1, #argsSoFar do
+                args[i] = argsSoFar[i]
             end
-            return curried(table.unpack(args))
+
+            -- append new args
+            local newArgs = table.pack(...)
+            for i = 1, newArgs.n do
+                args[#args + 1] = newArgs[i]
+            end
+
+            if #args >= arity then
+                return fn(table.unpack(args, 1, arity))
+            else
+                return curried(args)
+            end
         end
     end
-    return curried
+    return curried({})
 end
 
 pub.id = function(x) return x end
