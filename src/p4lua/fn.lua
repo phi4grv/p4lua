@@ -4,8 +4,16 @@ local pub = {}
 
 pub.compose = function(...)
     local fs = {...}
+    return pub.composeArray(fs)
+end
+
+pub.composeArray = function(fs)
+    if type(fs) ~= "table" then
+        error(("bad argument #1 to 'composeArray' (table expected, got %s)"):format(type(fs)))
+    end
+
     if #fs == 0 then
-        return function(x) return x end
+        return pub.id
     end
     return function(...)
         local fio = ...
@@ -14,10 +22,6 @@ pub.compose = function(...)
         end
         return fio
     end
-end
-
-pub.compose_table = function(t)
-    return pub.compose(table.unpack(t))
 end
 
 pub.const = function(x)

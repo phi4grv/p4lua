@@ -12,8 +12,8 @@ local test_cases = {
         apply = function(...) return p4fn.compose(...) end
     },
     {
-        name = "p4lua.fn.compose_table",
-        apply = function(...) return p4fn.compose_table({ ... }) end
+        name = "p4lua.fn.composeArray",
+        apply = function(...) return p4fn.composeArray({ ... }) end
     }
 }
 
@@ -42,6 +42,24 @@ for _, case in ipairs(test_cases) do
 
     end)
 end
+
+describe("pub.composeArray", function()
+
+    it("throws error if input is not a table", function()
+        assert.has_error(function()
+            p4fn.composeArray(nil)
+        end, "bad argument #1 to 'composeArray' (table expected, got nil)")
+
+        assert.has_error(function()
+            p4fn.composeArray(123)
+        end, "bad argument #1 to 'composeArray' (table expected, got number)")
+
+        assert.has_error(function()
+            p4fn.composeArray("not a table")
+        end, "bad argument #1 to 'composeArray' (table expected, got string)")
+    end)
+
+end)
 
 describe("p4lua.fn.const function", function()
 
