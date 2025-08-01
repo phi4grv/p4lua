@@ -78,4 +78,18 @@ describe("p4lua.data.Maybe", function()
 
         end)
     end)
+
+    describe("Maybe.fromMaybe", function()
+
+        it("works as a normal function", function()
+            assert.are.equal("hello", Maybe.fromMaybe("default", Maybe.Just("hello")))
+            assert.are.equal("default", Maybe.fromMaybe("default", Maybe.Nothing))
+        end)
+
+        it("works as a curried function", function()
+            local curriedFromMaybe = Maybe.fromMaybe("default")
+            assert.are.equal("hello", curriedFromMaybe(Maybe.Just("hello")))
+            assert.are.equal("default", curriedFromMaybe(Maybe.Nothing))
+        end)
+    end)
 end)

@@ -18,4 +18,11 @@ pub.fmap = function(f, m)
     }, m)
 end
 
+pub.fromMaybe = function(default, m)
+    return match({
+        Just = function(v) return v end,
+        Nothing = function() return default end,
+    }, m)
+end
+
 return pub
