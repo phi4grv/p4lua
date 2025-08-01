@@ -55,6 +55,27 @@ describe("p4lua.data.Maybe", function()
             assert.is_false(called)
             assert.are.equal(Maybe.Nothing, result)
         end)
-    end)
 
+        describe("Maybe.fmap (curried)", function()
+            local inc = function(x) return x + 1 end
+            local fmapInc = Maybe.fmap(inc)
+
+            it("applies function inside Just", function()
+                local result = fmapInc(Maybe.Just(10))
+                assert.are.same({ _tag = "Just", value = 11 }, result)
+            end)
+
+            it("returns Nothing unchanged", function()
+                local result = fmapInc(Maybe.Nothing)
+                assert.are.same(Maybe.Nothing, result)
+            end)
+
+            it("throws error on invalid input", function()
+                assert.error_matches(function()
+                    fmapInc({ _tag = "Invalid" })
+                end, "Match error: unmatched tag")
+            end)
+
+        end)
+    end)
 end)
