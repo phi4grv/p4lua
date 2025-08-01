@@ -25,4 +25,11 @@ pub.fromMaybe = function(default, m)
     }, m)
 end
 
+pub.bind = function(m, f)
+    return pub.match({
+        Just = function(x) return f(x) end,
+        Nothing = function() return pub.Nothing end,
+    }, m)
+end
+
 return pub

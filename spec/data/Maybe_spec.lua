@@ -92,4 +92,34 @@ describe("p4lua.data.Maybe", function()
             assert.are.equal("default", curriedFromMaybe(Maybe.Nothing))
         end)
     end)
+
+    describe("Maybe.bind", function()
+
+        local function halfIfEven(n)
+            if n % 2 == 0 then
+                return Maybe.Just(n / 2)
+            else
+                return Maybe.Nothing
+            end
+        end
+
+        it("applies function to Just value", function()
+            local m = Maybe.Just(10)
+            local result = Maybe.bind(m, halfIfEven)
+            assert.are.same(Maybe.Just(5), result)
+        end)
+
+        it("returns Nothing when function returns Nothing", function()
+            local m = Maybe.Just(11)
+            local result = Maybe.bind(m, halfIfEven)
+            assert.are.same(Maybe.Nothing, result)
+        end)
+
+        it("returns Nothing when binding Nothing", function()
+            local m = Maybe.Nothing
+            local result = Maybe.bind(m, halfIfEven)
+            assert.are.same(Maybe.Nothing, result)
+        end)
+    end)
+
 end)
