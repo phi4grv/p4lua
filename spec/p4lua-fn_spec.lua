@@ -117,6 +117,49 @@ describe("p4lua.fn.curry", function()
 
 end)
 
+describe("p4lua.fn.flip", function()
+
+    it("flips arguments of a normal two-argument function", function()
+        local function f(a, b) return a - b end
+        local flipped = p4fn.flip(f)
+        assert.are.equal(flipped(5, 3), -2)
+    end)
+
+    it("works with 3 arguments", function()
+        local function f(a, b, c) return a - b + c end
+        local flipped = p4fn.flip(f)
+        assert.are.equal(flipped(5, 3, 1), -1)
+    end)
+
+    it("works with curried function", function()
+        local function f(a, b) return a - b end
+        local curried = p4fn.curry(f)
+        local flipped = p4fn.flip(curried)
+
+        assert.are.equal(flipped(5)(3), -2)
+    end)
+
+    it("works with curried function with 3 arguments", function()
+        local function f(a, b, c) return a - b + c end
+        local curried = p4fn.curry(f)
+        local flipped = p4fn.flip(curried)
+        assert.are.equal(flipped(5, 3, 1), -1)
+        assert.are.equal(flipped(5)(3)(1), -1)
+    end)
+
+    it("returns itself when called with no arguments (acts like id)", function()
+        local function f(a, b) return a .. b end
+        local flipped = p4fn.flip(f)
+
+        -- When called with no arguments, it should return itself (like an identity function)
+        local again = flipped()
+        assert.are.equal(type(again), "function")
+
+        -- The returned function should still work correctly when given arguments
+        assert.are.equal(again("world", "hello "), "hello world")
+    end)
+end)
+
 describe("p4lua.fn.id function", function()
 
     it("returns the input value unchanged", function()

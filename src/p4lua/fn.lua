@@ -53,6 +53,20 @@ pub.curry = function(fn, arity)
     return curried({})
 end
 
+pub.flip = function(f)
+    return function(a, b, ...)
+        if (a == nil) then
+            return pub.flip(f)
+        end
+        if (b == nil) then
+            return function(b2, ...)
+                return f(b2, a, ...)
+            end
+        end
+        return f(b, a, ...)
+    end
+end
+
 pub.id = function(x) return x end
 
 return pub
