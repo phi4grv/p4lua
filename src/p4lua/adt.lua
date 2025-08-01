@@ -24,6 +24,32 @@ local function createCtor(typeName, tag, keys)
     end
 end
 
+local function match(typeName, valueKeys, branches, value)
+    local tag = value._tag
+    local handler = branches[tag]
+    if not handler then
+        error(("Match error: unmatched tag '%s' in type '%s'"):format(tag or "<nil>", typeName))
+    end
+    local ks = valueKeys[tag]
+    local args = {}
+    for i, v in ipairs(ks) do
+        args[i] = value[v]
+    end
+    return handler(table.unpack(args, 1, #ks))
+end
+
+local function makeMatch(typeName, valueKeys)
+    return function(branches, value)
+        if value ~= nil then
+            return match(typeName, valueKeys, branches, value)
+        else
+            return function(v)
+                return match(typeName, valueKeys, branches, v)
+            end
+        end
+    end
+end
+
 pub.defineSumType = function(typeName, typeSpec)
     local ctors = {}
     local valueKeys = {}
@@ -33,22 +59,7 @@ pub.defineSumType = function(typeName, typeSpec)
         valueKeys[tag] = keys
     end
 
-    local function match(value, branches)
-        local tag = value._tag
-        local handler = branches[value._tag]
-        if (not handler) then
-            error(("Match error: unmatched tag '%s' in type '%s'") :format(tag or "<nil>", typeName))
-        end
-
-        local ks = valueKeys[tag]
-        local args = {}
-        for i, v in ipairs(ks) do
-            args[i] = value[v]
-        end
-        return handler(table.unpack(args, 1, #ks))
-    end
-
-    return ctors, match
+    return ctors, makeMatch(typeName, valueKeys)
 end
 
 return pub
