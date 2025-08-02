@@ -106,3 +106,79 @@ describe("Kleisli composition using Monad.makeKleisliCompose and Monad.makeKleis
 
 end)
 
+describe("makeChainBind", function()
+
+    local function f1(x)
+        return x > 0 and Maybe.Just(x + 1) or Maybe.Nothing
+    end
+
+    local function f2(x)
+        return x % 2 == 0 and Maybe.Just(x * 2) or Maybe.Nothing
+    end
+
+    local function f3(x)
+        return Maybe.Just(x - 3)
+    end
+
+    local chainBind = Monad.makeChainBind(Maybe.bind)
+
+    it("chains multiple monadic functions correctly", function()
+        local result = chainBind({f1, f2, f3}, Maybe.Just(1))
+        assert.same(Maybe.Just(1), result)
+
+        local curriedResult = chainBind({f1, f2, f3})(Maybe.Just(1))
+        assert.same(Maybe.Just(1), curriedResult)
+    end)
+
+    it("returns Nothing if any function returns Nothing", function()
+        local result = chainBind({f1, f2, f3}, Maybe.Just(-1)) -- f1 returns Nothing
+        assert.equals(Maybe.Nothing, result)
+
+        local curriedResult = chainBind({f1, f2, f3})(Maybe.Just(-1))
+        assert.equals(Maybe.Nothing, curriedResult)
+
+        local result2 = chainBind({f1, f2, f3}, Maybe.Just(4)) -- f2 fails (4 % 2 ≠ 0)
+        assert.equals(Maybe.Nothing, result2)
+
+        local curriedResult2 = chainBind({f1, f2, f3})(Maybe.Just(4)) -- f2 fails (4 % 2 ≠ 0)
+        assert.equals(Maybe.Nothing, curriedResult2)
+    end)
+
+    it("works with a single function", function()
+        local result = chainBind({f3}, Maybe.Just(10))
+        assert.same(Maybe.Just(7), result)
+
+        local curriedResult = chainBind({f3})(Maybe.Just(10))
+        assert.same(Maybe.Just(7), curriedResult)
+    end)
+
+    it("returns identity when function list is empty", function()
+        local result = chainBind({}, Maybe.Just(42))
+        assert.same(Maybe.Just(42), result)
+
+        local curriedResult = chainBind({})(Maybe.Just(42))
+        assert.same(Maybe.Just(42), curriedResult)
+    end)
+
+    it("returns identity function when called with nil", function()
+        local result = chainBind(nil, Maybe.Just("hello"))
+        assert.are.same(Maybe.Just("hello"), result)
+
+        local curriedResult = chainBind(nil)(Maybe.Just("hello"))
+        assert.are.same(Maybe.Just("hello"), curriedResult)
+    end)
+
+    it("returns identity function when called with no args", function()
+        local curriedResult = chainBind()(Maybe.Just("hello"))
+        assert.are.same(Maybe.Just("hello"), curriedResult)
+    end)
+
+    it("supports a single function instead of a list", function()
+        local result = chainBind(f3, Maybe.Just(10)) -- f3: x - 3 → 7
+        assert.same(Maybe.Just(7), result)
+
+        local curriedResult = chainBind(f3)(Maybe.Just(10))
+        assert.same(Maybe.Just(7), curriedResult)
+    end)
+
+end)

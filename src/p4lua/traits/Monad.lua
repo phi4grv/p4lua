@@ -1,5 +1,27 @@
 local pub = {}
 
+pub.makeChainBind = function(bind)
+    local function chainBind(fs, m)
+        if m == nil then
+            return function(actualM)
+                return chainBind(fs, actualM)
+            end
+        end
+
+        if (type(fs) ~= "table") then
+            fs = { fs } -- wrap single function or nil as a table
+        end
+
+        local result = m
+        for _, f in ipairs(fs) do
+            result = bind(result, f)
+        end
+        return result
+    end
+
+    return chainBind
+end
+
 local function kleisliCompose(bind, f, g)
     return function(x)
         return bind(f(x), g)
