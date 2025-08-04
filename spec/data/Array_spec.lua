@@ -136,6 +136,6 @@ describe("p4lua.data.Array.zipWith", function()
             local result = Array.zipWith(fs, a1, a2)
             assert.are.same({ 5, 10 }, result)
         end)
-    end)
 
+    end)
 end)

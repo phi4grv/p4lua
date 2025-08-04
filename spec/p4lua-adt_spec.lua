@@ -101,4 +101,5 @@ describe("match function returned by defineSumType", function()
         assert.are.same("TwoKeys:1,2", curried(ASumType.TwoKeys(1, 2)))
         assert.are.same("ThreeKeys:1,2,3", curried(ASumType.ThreeKeys(1, 2, 3)))
     end)
+
 end)

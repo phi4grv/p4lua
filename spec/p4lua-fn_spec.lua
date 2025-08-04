@@ -92,6 +92,7 @@ describe("p4lua.fn.chain", function()
         local result = curried(3)
         assert.are.equal(8, result)
     end)
+
 end)
 
 describe("p4lua.fn.const function", function()
@@ -209,6 +210,7 @@ describe("p4lua.fn.flip", function()
         -- The returned function should still work correctly when given arguments
         assert.are.equal(again("world", "hello "), "hello world")
     end)
+
 end)
 
 describe("p4lua.fn.id function", function()

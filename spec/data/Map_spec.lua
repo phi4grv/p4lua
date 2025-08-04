@@ -193,4 +193,5 @@ describe("Map.valuesByKeys function", function()
         local vals = Map.valuesByKeys(m, keys)
         assert.are.same({}, vals)
     end)
+
 end)

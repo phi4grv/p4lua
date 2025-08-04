@@ -118,6 +118,7 @@ describe("p4lua.data.Maybe", function()
                 }, nothingValue)
             end, "Match error: unmatched tag")
         end)
+
     end)
 
     describe("Maybe.fmap", function()
@@ -206,6 +207,6 @@ describe("p4lua.data.Maybe", function()
             local result = Maybe.bind(m, halfIfEven)
             assert.are.same(Maybe.Nothing, result)
         end)
-    end)
 
+    end)
 end)
