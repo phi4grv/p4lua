@@ -2,6 +2,24 @@ require("p4lua.compat")
 
 local pub = {}
 
+pub.chain = function(fs, x)
+    if x == nil then
+        return function(actualX)
+            return pub.chain(fs, actualX)
+        end
+    end
+
+    if type(fs) ~= "table" then
+        error("chain expects a list of functions")
+    end
+
+    local result = x
+    for _, f in ipairs(fs) do
+        result = f(result)
+    end
+    return result
+end
+
 pub.compose = function(...)
     local fs = {...}
     return pub.composeArray(fs)

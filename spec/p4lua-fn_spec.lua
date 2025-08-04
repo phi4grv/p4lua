@@ -61,6 +61,39 @@ describe("pub.composeArray", function()
 
 end)
 
+describe("p4lua.fn.chain", function()
+
+    it("applies a single function to a value", function()
+        local f = function(x) return x + 1 end
+        local result = p4fn.chain({ f }, 1)
+        assert.are.equal(2, result)
+    end)
+
+    it("applies multiple functions from left to right", function()
+        local f1 = function(x) return x + 2 end
+        local f2 = function(x) return x * 3 end
+        local f3 = function(x) return x - 5 end
+
+        -- f3(f2(f1(4))) = f3(f2(6)) = f3(18) = 13
+        local result = p4fn.chain({ f1, f2, f3 }, 4)
+        assert.are.equal(13, result)
+    end)
+
+    it("returns the value unchanged if no functions are given", function()
+        local result = p4fn.chain({}, 42)
+        assert.are.equal(42, result)
+    end)
+
+    it("is curried: chain(fns)(x)", function()
+        local f1 = function(x) return x + 1 end
+        local f2 = function(x) return x * 2 end
+
+        local curried = p4fn.chain({ f1, f2 })
+        local result = curried(3)
+        assert.are.equal(8, result)
+    end)
+end)
+
 describe("p4lua.fn.const function", function()
 
     it("should always return the first argument", function()
