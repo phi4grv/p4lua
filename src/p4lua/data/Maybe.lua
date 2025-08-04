@@ -1,4 +1,5 @@
 local adt = require("p4lua.adt")
+local p4fn = require("p4lua.fn")
 
 local pub = {}
 
@@ -10,6 +11,35 @@ local Maybe, match = adt.defineSumType("Maybe", {
 pub.Just = Maybe.Just
 pub.Nothing = Maybe.Nothing()
 pub.match = match
+
+pub.equalsWith = function(eq, ma, mb)
+    if (mb == nil) then
+        if (ma == nil) then
+            return function(ma2, mb2)
+                return pub.equalsWith(eq, ma2, mb2)
+            end
+        end
+        return function(mb2)
+            return pub.equalsWith(eq, ma, mb2)
+        end
+    end
+    return match({
+        Just = function(a)
+            return match({
+                Just = function(b) return eq(a, b) end,
+                Nothing = p4fn.const(false)
+            }, mb)
+        end,
+        Nothing = function()
+            return match({
+                Just = p4fn.const(false),
+                Nothing = p4fn.const(true)
+            }, mb)
+        end
+    }, ma)
+end
+
+pub.equals = pub.equalsWith(function(a, b) return a == b end)
 
 pub.fmap = function(f, m)
     return match({

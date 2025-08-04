@@ -1,8 +1,94 @@
 local assert = require("luassert")
+local spy = require("luassert.spy")
 
 describe("p4lua.data.Maybe", function()
 
     local Maybe = require("p4lua.data.Maybe")
+
+    describe("Maybe.equalsWith", function()
+
+        it("calls the passed equality function for Just values", function()
+            local eqSpy = spy.new(function(a, b)
+                return a == b
+            end)
+            local a = Maybe.Just(10)
+            local b = Maybe.Just(10)
+
+            local result = Maybe.equalsWith(eqSpy, a, b)
+
+            assert.is_true(result)
+            assert.spy(eqSpy).was.called(1)
+            assert.spy(eqSpy).was.called_with(10, 10)
+        end)
+
+        it("does not call equality function when comparing two Nothings", function()
+            local eqSpy = spy.new(function(a, b)
+                return a == b
+            end)
+            local a = Maybe.Nothing
+            local b = Maybe.Nothing
+
+            local result = Maybe.equalsWith(eqSpy, a, b)
+
+            assert.is_true(result)
+            assert.spy(eqSpy).was_not.called()
+        end)
+
+        it("does not call equality function when comparing Just and Nothing", function()
+            local eqSpy = spy.new(function(a, b)
+                return a == b
+            end)
+            local a = Maybe.Just(10)
+            local b = Maybe.Nothing
+
+            local result1 = Maybe.equalsWith(eqSpy, a, b)
+            local result2 = Maybe.equalsWith(eqSpy, b, a)
+
+            assert.is_false(result1)
+            assert.is_false(result2)
+            assert.spy(eqSpy).was_not.called()
+        end)
+
+        describe("Maybe.equalsWith curried", function()
+
+            it("returns true for equal Just values", function()
+                local ma = Maybe.Just("apple")
+                local mb = Maybe.Just("apple")
+                local eqStr = function(a, b) return a == b end
+
+                local curried = Maybe.equalsWith(eqStr)
+                assert.is_true(curried(ma)(mb))
+            end)
+
+            it("returns false for different Just values", function()
+                local ma = Maybe.Just("apple")
+                local mb = Maybe.Just("banana")
+                local eqStr = function(a, b) return a == b end
+
+                local curried = Maybe.equalsWith(eqStr)
+                assert.is_false(curried(ma)(mb))
+            end)
+
+            it("returns false when one side is Nothing", function()
+                local ma = Maybe.Just("apple")
+                local mb = Maybe.Nothing
+                local eqStr = function(a, b) return a == b end
+
+                local curried = Maybe.equalsWith(eqStr)
+                assert.is_false(curried(ma)(mb))
+            end)
+
+            it("returns true when both sides are Nothing", function()
+                local ma = Maybe.Nothing
+                local mb = Maybe.Nothing
+                local eqStr = function(a, b) return a == b end
+
+                local curried = Maybe.equalsWith(eqStr)
+                assert.is_true(curried(ma)(mb))
+            end)
+
+        end)
+    end)
 
     describe("Maybe.match", function()
 
