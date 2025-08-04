@@ -40,13 +40,12 @@ end
 
 local function makeMatch(typeName, valueKeys)
     return function(branches, value)
-        if value ~= nil then
-            return match(typeName, valueKeys, branches, value)
-        else
+        if value == nil then
             return function(v)
                 return match(typeName, valueKeys, branches, v)
             end
         end
+        return match(typeName, valueKeys, branches, value)
     end
 end
 
