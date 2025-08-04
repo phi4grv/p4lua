@@ -13,9 +13,6 @@ pub.makeReadOnly = function(t)
         __index = t,
         __newindex = readOnlyNewindex,
         __metatable = false,  -- Protect the metatable from being accessed or changed
-        __pairs = function(_)
-            return pairs(t)
-        end,
     })
 end
 
