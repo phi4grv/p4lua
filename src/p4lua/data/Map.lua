@@ -1,8 +1,6 @@
-local p4tbl = require("p4lua.table")
-
 local pub = {}
 
-local empty = p4tbl.makeReadOnly({})
+local empty = {}
 
 pub.empty = function()
     return empty
@@ -13,7 +11,7 @@ pub.fromMutable = function(tbl)
         acc[k] = v
         return acc
     end
-    return p4tbl.makeReadOnly(pub.fold(f, {}, tbl))
+    return pub.fold(f, {}, tbl)
 end
 
 pub.fold = function(f, acc, map)

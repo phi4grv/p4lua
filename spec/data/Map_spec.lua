@@ -16,13 +16,6 @@ describe("Map.empty", function()
         assert.is_true(m1 == m2)
     end)
 
-    it("should be immutable (error on new index)", function()
-        local m = Map.empty()
-        assert.error_matches(function()
-            m.a = 1
-        end, "readonly")
-    end)
-
 end)
 
 describe("Map.fromMutable", function()
@@ -34,10 +27,6 @@ describe("Map.fromMutable", function()
         assert.is_table(map)
         assert.equals(1, map.a)
         assert.equals(2, map.b)
-
-        assert.has_error(function()
-            map.a = 100
-        end, "Attempt to modify readonly field 'a'") -- match your makeReadOnly error message
     end)
 
 end)
