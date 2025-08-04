@@ -1,4 +1,12 @@
+local p4tbl = require("p4lua.table")
+
 local pub = {}
+
+local empty = p4tbl.makeReadOnly({})
+
+pub.empty = function()
+    return empty
+end
 
 pub.new = function()
     return {}

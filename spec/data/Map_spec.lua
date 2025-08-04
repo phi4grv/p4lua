@@ -11,6 +11,29 @@ describe("p4lua.data.Map.new", function()
 
 end)
 
+describe("Map.empty", function()
+
+    it("should return an empty map (table) with no keys", function()
+        local m = Map.empty()
+        assert.is_table(m)
+        assert.is_nil(next(m))  -- check empty table
+    end)
+
+    it("should always return the same table (singleton)", function()
+        local m1 = Map.empty()
+        local m2 = Map.empty()
+        assert.is_true(m1 == m2)
+    end)
+
+    it("should be immutable (error on new index)", function()
+        local m = Map.empty()
+        assert.error_matches(function()
+            m.a = 1
+        end, "readonly")
+    end)
+
+end)
+
 describe("filterByKeys function", function()
 
     it("should return an empty Map when Map is empty and no keys are provided", function()
