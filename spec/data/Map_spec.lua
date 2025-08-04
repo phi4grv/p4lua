@@ -34,6 +34,63 @@ describe("Map.empty", function()
 
 end)
 
+describe("Map.fold", function()
+
+    it("sums all values in the map", function()
+        local map = { a = 1, b = 2, c = 3 }
+
+        local sum = Map.fold(function(acc, _, v)
+            return acc + v
+        end, 0, map)
+        assert.is_true(sum == 6)
+    end)
+
+    it("accumulates entries into a new table by key and value", function()
+        local map = { a = 1, b = 2 }
+        local seen = Map.fold(function(acc, k, v)
+            acc[k .. v] = true
+            return acc
+        end, {}, map)
+
+        assert.is_true(seen["a1"])
+        assert.is_true(seen["b2"])
+    end)
+
+    it("returns the initial value when folding over an empty map", function()
+        local result = Map.fold(function(acc, k, v) return acc + 1 end, 0, Map.empty())
+        assert.equals(0, result)
+    end)
+
+    describe("Map.fold (curried)", function()
+        local map = { a = 1, b = 2 }
+
+        local function sum(acc, _, v)
+            return acc + v
+        end
+
+        it("works with full application: fold(f, init, map)", function()
+            local result = Map.fold(sum, 0, map)
+            assert.equals(3, result)
+        end)
+
+        it("works with partial: fold(f, init)(map)", function()
+            local result = Map.fold(sum, 0)(map)
+            assert.equals(3, result)
+        end)
+
+        it("works with partial: fold(f)(init, map)", function()
+            local result = Map.fold(sum)(0, map)
+            assert.equals(3, result)
+        end)
+
+        it("works with full curry: fold(f)(init)(map)", function()
+            local result = Map.fold(sum)(0)(map)
+            assert.equals(3, result)
+        end)
+    end)
+
+end)
+
 describe("filterByKeys function", function()
 
     it("should return an empty Map when Map is empty and no keys are provided", function()

@@ -12,6 +12,27 @@ pub.new = function()
     return {}
 end
 
+pub.fold = function(f, acc, map)
+    if map == nil then
+        if acc == nil then
+            if f == nil then
+                error("Map.fold: function argument is required")
+            end
+            return function(a, m)
+                return pub.fold(f, a, m)
+            end
+        end
+        return function(m)
+            return pub.fold(f, acc, m)
+        end
+    end
+
+    for k, v in pairs(map) do
+        acc = f(acc, k, v)
+    end
+    return acc
+end
+
 pub.filterByKeys = function(m, ks)
     local result = {}
     for _, k in ipairs(ks) do
