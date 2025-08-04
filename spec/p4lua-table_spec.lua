@@ -29,4 +29,34 @@ describe("p4lua.table.makeReadOnly", function()
         assert.has_error(function() setmetatable(rot, {}) end)
     end)
 
+    it("supports pairs iteration", function()
+        local t = { foo = "bar", baz = 123 }
+        local ro = p4tbl.makeReadOnly(t)
+
+        local keys = {}
+        local values = {}
+        for k, v in pairs(ro) do
+            table.insert(keys, k)
+            table.insert(values, v)
+        end
+
+        assert.equals(2, #keys)
+        assert.is(keys[1] == "foo" or keys[1] == "baz")
+        assert.is_true(keys[2] == "foo" or keys[2] == "baz")
+        assert.is_true(values[1] == "bar" or values[1] == 123)
+        assert.is_true(values[2] == "bar" or values[2] == 123)
+    end)
+
+    it("#focus supports ipairs iteration", function()
+        local t = { "a", "b", "c" }
+        local ro = p4tbl.makeReadOnly(t)
+
+        local result = {}
+        for i, v in ipairs(ro) do
+            result[i] = v
+        end
+
+        assert.are.same({ "a", "b", "c" }, result)
+    end)
+
 end)
