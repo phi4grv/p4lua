@@ -1,4 +1,4 @@
-local assert = require("p4lua.test.compat").luassert(assert)
+local assert = require("luassert")
 
 describe("p4lua.require", function()
 

@@ -1,4 +1,4 @@
-local assert = require("p4lua.test.compat").luassert(assert)
+local assert = require("luassert")
 
 local p4tbl = require("p4lua.table")
 
