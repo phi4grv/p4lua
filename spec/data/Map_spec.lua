@@ -34,6 +34,23 @@ describe("Map.empty", function()
 
 end)
 
+describe("Map.fromMutable", function()
+
+    it("creates an immutable Map from a mutable table", function()
+        local mutable = { a = 1, b = 2 }
+        local map = Map.fromMutable(mutable)
+
+        assert.is_table(map)
+        assert.equals(1, map.a)
+        assert.equals(2, map.b)
+
+        assert.has_error(function()
+            map.a = 100
+        end, "Attempt to modify readonly field 'a'") -- match your makeReadOnly error message
+    end)
+
+end)
+
 describe("Map.fold", function()
 
     it("sums all values in the map", function()

@@ -12,6 +12,14 @@ pub.new = function()
     return {}
 end
 
+pub.fromMutable = function(tbl)
+    local f = function(acc, k, v)
+        acc[k] = v
+        return acc
+    end
+    return p4tbl.makeReadOnly(pub.fold(f, {}, tbl))
+end
+
 pub.fold = function(f, acc, map)
     if map == nil then
         if acc == nil then
