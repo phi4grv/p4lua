@@ -2,22 +2,6 @@ local assert = require("luassert")
 
 local Map = require("p4lua.data.Map")
 
-describe("Map.empty", function()
-
-    it("should return an empty map (table) with no keys", function()
-        local m = Map.empty()
-        assert.is_table(m)
-        assert.is_nil(next(m))  -- check empty table
-    end)
-
-    it("should always return the same table (singleton)", function()
-        local m1 = Map.empty()
-        local m2 = Map.empty()
-        assert.is_true(m1 == m2)
-    end)
-
-end)
-
 describe("Map.fromMutable", function()
 
     it("creates an immutable Map from a mutable table", function()
@@ -54,7 +38,7 @@ describe("Map.fold", function()
     end)
 
     it("returns the initial value when folding over an empty map", function()
-        local result = Map.fold(function(acc, k, v) return acc + 1 end, 0, Map.empty())
+        local result = Map.fold(function(acc, k, v) return acc + 1 end, 0, {})
         assert.equals(0, result)
     end)
 
