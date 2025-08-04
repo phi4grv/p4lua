@@ -2,15 +2,6 @@ local assert = require("luassert")
 
 local Map = require("p4lua.data.Map")
 
-describe("p4lua.data.Map.new", function()
-
-    it("should create an empty array when no arguments are passed", function()
-        local map = Map.new()
-        assert.are.same(map, {})
-    end)
-
-end)
-
 describe("Map.empty", function()
 
     it("should return an empty map (table) with no keys", function()

@@ -8,10 +8,6 @@ pub.empty = function()
     return empty
 end
 
-pub.new = function()
-    return {}
-end
-
 pub.fromMutable = function(tbl)
     local f = function(acc, k, v)
         acc[k] = v
