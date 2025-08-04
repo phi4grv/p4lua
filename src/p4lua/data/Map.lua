@@ -23,9 +23,6 @@ end
 pub.fold = function(f, acc, map)
     if map == nil then
         if acc == nil then
-            if f == nil then
-                error("Map.fold: function argument is required")
-            end
             return function(a, m)
                 return pub.fold(f, a, m)
             end
