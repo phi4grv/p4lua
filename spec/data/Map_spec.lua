@@ -82,6 +82,63 @@ describe("filterByKeys function", function()
 
 end)
 
+describe("Map.insert", function()
+
+    it("inserts a new key-value pair into an empty map", function()
+        local m0 = {}
+        local m1 = Map.insert("a", 1, m0)
+        assert.is_nil(m0["a"])
+        assert.equals(1, m1["a"])
+    end)
+
+    it("inserts a new key-value pair into a non-empty map", function()
+        local m0 = { b = 2 }
+        local m1 = Map.insert("a", 1, m0)
+
+        assert.equals(2, m0["b"])
+        assert.is_nil(m0["a"])
+        assert.equals(1, m1["a"])
+        assert.equals(2, m1["b"])
+    end)
+
+    it("overwrites an existing key with a new value", function()
+        local m0 = { a = 1, b = 2 }
+        local m1 = Map.insert("a", 3, m0)
+        assert.equals(1, m0["a"])
+        assert.equals(3, m1["a"])
+        assert.equals(2, m1["b"])
+    end)
+
+    it("does not mutate the original map", function()
+        local m0 = { a = 1 }
+        local m1 = Map.insert("a", 2, m0)
+        assert.equals(1, m0["a"])
+        assert.equals(2, m1["a"])
+    end)
+
+    it("supports currying: Map.insert(k, v)(map)", function()
+        local m0 = { a = 1 }
+        local insertA = Map.insert("a", 2)
+        local m1 = insertA(m0)
+        assert.equals(2, m1["a"])
+    end)
+
+    it("supports currying: Map.insert(k)(v)(map)", function()
+        local m0 = { a = 1 }
+        local insertA = Map.insert("a")
+        local insertA2 = insertA(2)
+        local m1 = insertA2(m0)
+        assert.equals(2, m1["a"])
+    end)
+
+    it("supports currying: Map.insert(k)(v, map)", function()
+        local m0 = { a = 1 }
+        local insertA = Map.insert("a")
+        local m1 = insertA(2, m0)
+        assert.equals(2, m1["a"])
+    end)
+end)
+
 describe("Map.values", function()
 
     it("returns an empty array when the table is empty", function()
