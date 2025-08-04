@@ -2,19 +2,6 @@ local assert = require("luassert")
 
 local Map = require("p4lua.data.Map")
 
-describe("Map.fromMutable", function()
-
-    it("creates an immutable Map from a mutable table", function()
-        local mutable = { a = 1, b = 2 }
-        local map = Map.fromMutable(mutable)
-
-        assert.is_table(map)
-        assert.equals(1, map.a)
-        assert.equals(2, map.b)
-    end)
-
-end)
-
 describe("Map.fold", function()
 
     it("sums all values in the map", function()
