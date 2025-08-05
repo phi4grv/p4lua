@@ -4,6 +4,41 @@ local spy = require("luassert.spy")
 describe("p4lua.data.Maybe", function()
 
     local Maybe = require("p4lua.data.Maybe")
+    local Just, Nothing = require("p4lua").require("p4lua.data.Maybe", { "Just", "Nothing" })
+
+    describe("Maybe.catMaybes", function()
+
+        it("returns empty array when input is empty", function()
+            local empty = {}
+            local actual = Maybe.catMaybes(empty)
+
+            assert.are.same({}, actual)
+            assert.are_not.equal(empty, actual)
+        end)
+
+        it("returns empty array when all elements are Nothing", function()
+            local ms = { Nothing, Nothing }
+            local actual = Maybe.catMaybes(ms)
+
+            assert.are.same({}, actual)
+            assert.are.same({ Nothing, Nothing } , ms)
+        end)
+
+        it("extracts values from all Just elements", function()
+            local ms = { Just(1), Just(2), Just(3) }
+            local actual = Maybe.catMaybes(ms)
+            assert.are.same({ 1, 2, 3 }, actual)
+            assert.are.same({ Just(1), Just(2), Just(3) }, ms)
+        end)
+
+        it("removes Nothing elements and keeps Just values", function()
+            local ms = { Just(10), Nothing, Just(20) }
+            local actual = Maybe.catMaybes(ms)
+            assert.are.same({ 10, 20 }, actual)
+            assert.are.same({ Just(10), Nothing, Just(20) }, ms)
+        end)
+
+    end)
 
     describe("Maybe.equalsWith", function()
 

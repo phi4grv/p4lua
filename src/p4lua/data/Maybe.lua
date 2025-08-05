@@ -1,5 +1,6 @@
 local adt = require("p4lua.adt")
 local p4fn = require("p4lua.fn")
+local Array = require("p4lua.data.Array")
 
 local pub = {}
 
@@ -11,6 +12,20 @@ local Maybe, match = adt.defineSumType("Maybe", {
 pub.Just = Maybe.Just
 pub.Nothing = Maybe.Nothing()
 pub.match = match
+
+pub.catMaybes = function(m)
+    return Array.foldl(function(acc, a)
+        return match({
+            Just = function(v)
+                acc[#acc + 1] = v
+                return acc
+            end,
+            Nothing = function()
+                return acc
+            end
+        }, a)
+    end, {}, m)
+end
 
 pub.equalsWith = function(eq, ma, mb)
     if (mb == nil) then
