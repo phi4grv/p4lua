@@ -1,5 +1,43 @@
 local pub = {}
 
+pub.foldl = function(ff, acc, arr)
+    if arr == nil then
+        if (acc == nil) then
+            return function(acc2, arr2)
+                return pub.foldl(ff, acc2, arr2)
+            end
+        end
+        return function(arr2)
+            return pub.foldl(ff, acc, arr2)
+        end
+    end
+
+    local result = acc
+    for i = 1, #arr do
+        result = ff(result, arr[i])
+    end
+    return result
+end
+
+pub.foldr = function(ff, acc, arr)
+    if arr == nil then
+        if (acc == nil) then
+            return function(acc2, arr2)
+                return pub.foldr(ff, acc2, arr2)
+            end
+        end
+        return function(arr2)
+            return pub.foldr(ff, acc, arr2)
+        end
+    end
+
+    local result = acc
+    for i = #arr, 1, -1 do
+        result = ff(arr[i], result)
+    end
+    return result
+end
+
 pub.isEmpty = function(arr)
     return type(arr) ~= "table" or arr[1] == nil
 end
