@@ -1,3 +1,5 @@
+local Maybe = require("p4lua.data.Maybe")
+
 local pub = {}
 
 local empty = {}
@@ -53,6 +55,21 @@ pub.insert = function(k, v, m)
     newMap[k] = v
 
     return newMap
+end
+
+pub.lookup = function(k, m)
+    if m == nil then
+        return function(m2)
+            return pub.lookup(k, m2)
+        end
+    end
+
+    local v = m[k]
+    if v == nil then
+        return Maybe.Nothing
+    else
+        return Maybe.Just(v)
+    end
 end
 
 pub.values = function(m)

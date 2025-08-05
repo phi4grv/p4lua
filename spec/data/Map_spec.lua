@@ -1,4 +1,5 @@
 local assert = require("luassert")
+local Maybe = require("p4lua.data.Maybe")
 
 local Map = require("p4lua.data.Map")
 
@@ -144,6 +145,25 @@ describe("Map.insert", function()
         assert.equals(2, m1["a"])
         assert.are.same({ a = 1 }, m0)
     end)
+end)
+
+describe("Map.lookup", function()
+
+    it("returns Maybe.Just(value) if key exists", function()
+        local actual = Map.lookup("a", { a = 42 })
+        assert.is_true(Maybe.equals(Maybe.Just(42), actual))
+    end)
+
+    it("returns Maybe.Nothing() if key does not exist", function()
+        local actual = Map.lookup("missing", { })
+        assert.equals(Maybe.Nothing, actual)
+    end)
+
+    it("supports currying", function()
+        local actual = Map.lookup("a")({ a = 99})
+        assert.is_true(Maybe.equals(Maybe.Just(99), actual))
+    end)
+
 end)
 
 describe("Map.values", function()
