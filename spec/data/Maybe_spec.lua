@@ -125,6 +125,52 @@ describe("p4lua.data.Maybe", function()
         end)
     end)
 
+    describe("Maybe.mapMaybe", function()
+
+        local f = function(x)
+            if x % 2 == 0 then
+                return Just(x * 10)
+            else
+                return Nothing
+            end
+        end
+
+        it("returns empty array when input is empty", function()
+            local empty = {}
+            local actual = Maybe.mapMaybe(f, empty)
+            assert.are.same({}, actual)
+            assert.not_equal(actual, empty)
+        end)
+
+        it("returns empty array when all results are Nothing", function()
+            local allOdd = { 1, 3, 5 }
+            local actual = Maybe.mapMaybe(f, allOdd)
+            assert.are.same({}, actual)
+            assert.are.same({ 1, 3, 5 }, allOdd)
+        end)
+
+        it("extracts values when all results are Just", function()
+            local allEven = { 2, 4 }
+            local actual = Maybe.mapMaybe(f, allEven)
+            assert.are.same({ 20, 40 }, actual)
+            assert.are.same({ 2, 4 }, allEven)
+        end)
+
+        it("removes Nothing elements and keeps Just values", function()
+            local mixed = { 1, 2, 3, 4 }
+            local actual = Maybe.mapMaybe(f, mixed)
+            assert.are.same({ 20, 40 }, actual)
+            assert.are.same({ 1, 2, 3, 4 }, mixed)
+        end)
+
+        it("supports currying", function()
+            local arr = { 2, 4 }
+            assert.are.same({ 20, 40 }, Maybe.mapMaybe(f)(arr))
+            assert.are.same({ 20, 40 }, Maybe.mapMaybe(f, arr))
+        end)
+
+    end)
+
     describe("Maybe.match", function()
 
         it("should match Just and apply the function", function()

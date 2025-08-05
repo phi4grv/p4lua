@@ -13,6 +13,13 @@ pub.Just = Maybe.Just
 pub.Nothing = Maybe.Nothing()
 pub.match = match
 
+pub.bind = function(m, f)
+    return pub.match({
+        Just = function(x) return f(x) end,
+        Nothing = function() return pub.Nothing end,
+    }, m)
+end
+
 pub.catMaybes = function(m)
     return Array.foldl(function(acc, a)
         return match({
@@ -70,11 +77,24 @@ pub.fromMaybe = function(default, m)
     }, m)
 end
 
-pub.bind = function(m, f)
-    return pub.match({
-        Just = function(x) return f(x) end,
-        Nothing = function() return pub.Nothing end,
-    }, m)
+pub.mapMaybe = function(f, arr)
+    if arr == nil then
+        return function(arr2)
+            return pub.mapMaybe(f, arr2)
+        end
+    end
+
+    return Array.foldl(function(acc, a)
+        return match({
+            Just = function(v)
+                acc[#acc + 1] = v
+                return acc
+            end,
+            Nothing = function()
+                return acc
+            end
+        }, f(a))
+    end, {}, arr)
 end
 
 return pub
