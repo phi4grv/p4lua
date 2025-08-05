@@ -1,3 +1,4 @@
+local Array = require("p4lua.data.Array")
 local Maybe = require("p4lua.data.Maybe")
 
 local pub = {}
@@ -80,13 +81,17 @@ pub.values = function(m)
     return result
 end
 
--- TODO: return [Maybe a]
+-- valuesByKeys :: Map k v -> [k] -> [Maybe v]
 pub.valuesByKeys = function(m, ks)
-    local result = {}
-    for i, k in ipairs(ks) do
-        result[i] =  m[k]
+    if ks == nil then
+        return function(ks2)
+            return pub.valuesByKeys(m, ks2)
+        end
     end
-    return result
+
+    return Array.fmap(function(k)
+        return pub.lookup(k, m)
+    end, ks)
 end
 
 return pub
