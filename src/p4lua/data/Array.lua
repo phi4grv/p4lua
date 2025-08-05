@@ -1,5 +1,19 @@
 local pub = {}
 
+pub.fmap = function(f, arr)
+    if (arr == nil) then
+        return function(arr2)
+            return pub.fmap(f, arr2)
+        end
+    end
+
+    local result = {}
+    for i = 1, #arr do
+        result[i] = f(arr[i])
+    end
+    return result
+end
+
 pub.foldl = function(ff, acc, arr)
     if arr == nil then
         if (acc == nil) then

@@ -4,6 +4,31 @@ describe("p4lua.data.Array", function()
 
     local Array = require("p4lua.data.Array")
 
+    describe("Array.fmap", function()
+
+        local double = function(x) return x * 2 end
+
+        it("returns empty array when input is empty", function()
+            local empty = {}
+            local actual = Array.fmap(double, empty)
+            assert.same({}, actual)
+            assert.not_equal(empty, actual)
+        end)
+
+        it("applies function to each element", function()
+            local arr = { 1, 2, 3 }
+            local actual = Array.fmap(double, arr)
+            assert.same({ 2, 4, 6 }, actual)
+            assert.same({ 1, 2, 3 }, arr)
+        end)
+
+        it("supports currying", function()
+            local arr = { 1, 2, 3 }
+            assert.are.same({ 2, 4, 6 }, Array.fmap(double)(arr))
+        end)
+
+    end)
+
     describe("foldl", function()
         local ff = function(acc, v) return acc - v end
 
