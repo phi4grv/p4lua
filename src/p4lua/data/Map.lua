@@ -2,10 +2,8 @@ local Maybe = require("p4lua.data.Maybe")
 
 local pub = {}
 
-local empty = {}
-
 pub.empty = function()
-    return empty
+    return {}
 end
 
 pub.fold = function(f, acc, map)
