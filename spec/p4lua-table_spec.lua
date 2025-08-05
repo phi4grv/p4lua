@@ -2,11 +2,11 @@ local assert = require("luassert")
 
 local p4tbl = require("p4lua.table")
 
-describe("p4lua.table.makeReadOnly", function()
+describe("p4lua.table.seal", function()
 
     it("returns a readonly proxy table", function()
         local t = { a = 1, b = 2 }
-        local rot = p4tbl.makeReadOnly(t)
+        local rot = p4tbl.seal(t)
 
         assert.are.equal(1, rot.a)
         assert.are.equal(2, rot.b)
@@ -16,11 +16,11 @@ describe("p4lua.table.makeReadOnly", function()
     end)
 
     it("raises error if argument is not a table", function()
-        assert.error_matches(function() p4tbl.makeReadOnly(123) end, "makeReadOnly expects a table")
+        assert.error_matches(function() p4tbl.seal(123) end, "seal expects a table")
     end)
 
     it("protects the metatable", function()
-        local rot = p4tbl.makeReadOnly({ x = 1 })
+        local rot = p4tbl.seal({ x = 1 })
 
         -- __metatable field is set to false to hide the metatable
         assert.is_false(getmetatable(rot))

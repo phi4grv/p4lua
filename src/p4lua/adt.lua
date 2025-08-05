@@ -5,7 +5,7 @@ local pub = {}
 
 local function createCtor(typeName, tag, keys)
     if (Array.isEmpty(keys)) then
-        local value = p4tbl.makeReadOnly({ _tag = tag })
+        local value = p4tbl.seal({ _tag = tag })
         return function()
             return value
         end

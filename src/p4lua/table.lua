@@ -1,17 +1,20 @@
 local pub = {}
 
-local readOnlyNewindex = function(_, key)
+local sealNewindex = function(_, key)
     error("Attempt to modify readonly field '" .. tostring(key) .. "'")
 end
 
-pub.makeReadOnly = function(t)
+--- Makes a table immutable and prevents iteration.
+--- @param t table The table to seal.
+--- @return table A sealed proxy table.
+pub.seal = function(t)
     if type(t) ~= "table" then
-        error("makeReadOnly expects a table, got " .. type(t))
+        error("p4lua.table.seal expects a table, got " .. type(t))
     end
 
     return setmetatable({}, {
         __index = t,
-        __newindex = readOnlyNewindex,
+        __newindex = sealNewindex,
         __metatable = false,  -- Protect the metatable from being accessed or changed
     })
 end
