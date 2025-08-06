@@ -1,8 +1,44 @@
 local assert = require("luassert")
 
-local MutableMap = require("p4lua.data.Map.Mutable")
-
 describe("MutableMap.insert", function()
+
+    local MutableMap = require("p4lua.data.Map.Mutable")
+
+    describe("MutableMap.delete", function()
+
+        it("removes an existing key from the map", function()
+            local m = { a = 1, b = 2, c = 3 }
+            local actual = MutableMap.delete("b", m)
+
+            assert.same({ a = 1, c = 3 }, actual)
+            assert.equal(m, actual)
+        end)
+
+        it("does nothing if the key does not exist", function()
+            local m = { a = 1, b = 2 }
+            local actual = MutableMap.delete("missing", m)
+
+            assert.same({ a = 1, b = 2 }, actual)
+            assert.equal(m, actual)
+        end)
+
+        it("works with an empty map", function()
+            local empty = {}
+            local actual = MutableMap.delete("x", empty)
+
+            assert.same({}, actual)
+            assert.equal(empty, actual)
+        end)
+
+        it("supports currying", function()
+            local m = { a = 1, b = 2, c = 3 }
+            local actual = MutableMap.delete("b")(m)
+
+            assert.same({ a = 1, c = 3 }, actual)
+            assert.equal(m, actual)
+        end)
+
+    end)
 
     it("inserts a key-value pair into the map and modifies the original", function()
         local m = { a = 1 }
