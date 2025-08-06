@@ -96,6 +96,66 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.insert", function()
+
+        it("inserts into an empty array at index 1", function()
+            local arr = {}
+            local actual = Array.insert(1, "v", arr)
+
+            assert.same({ "v" }, actual)
+            assert.same({}, arr)
+        end)
+
+        it("inserts at the beginning when index < 1", function()
+            local arr = { "b", "c" }
+            local actual = Array.insert(0, "a", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "b", "c" }, arr)
+        end)
+
+        it("inserts at the beginning when index == 1", function()
+            local arr = { "b", "c" }
+            local actual = Array.insert(1, "a", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "b", "c" }, arr)
+        end)
+
+        it("inserts in the middle", function()
+            local arr = { "a", "c" }
+            local actual = Array.insert(2, "b", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "a", "c" }, arr)
+        end)
+
+        it("inserts at the end when index == length + 1", function()
+            local arr = { "a", "b" }
+            local actual = Array.insert(3, "c", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "a", "b" }, arr)
+        end)
+
+        it("inserts at the end when index > length + 1", function()
+            local arr = { "a", "b" }
+            local actual = Array.insert(5, "c", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "a", "b" }, arr)
+        end)
+
+        it("supports curry", function()
+            local arr = { "a", "c" }
+
+            assert.same({ "a", "b", "c" }, Array.insert(2)("b")(arr))
+            assert.same({ "a", "b", "c" }, Array.insert(2)("b", arr))
+            assert.same({ "a", "b", "c" }, Array.insert(2, "b")(arr))
+        end)
+
+    end)
+
     describe("p4lua.data.Array.isEmpty", function()
 
         it("returns true for empty arrays", function()

@@ -66,6 +66,42 @@ pub.foldr = function(ff, acc, arr)
     return result
 end
 
+pub.insert = function(i, v, arr)
+    if (arr == nil) then
+        if (v == nil) then
+            return function(v2, arr2)
+                return pub.insert(i, v2, arr2)
+            end
+        end
+        return function(arr2)
+            return pub.insert(i, v, arr2)
+        end
+    end
+
+    local n = #arr
+    local pos
+    if i < 1 then
+        pos = 1
+    elseif i > n + 1 then
+        pos = n + 1
+    else
+        pos = i
+    end
+
+    local result = {}
+    for j = 1, pos - 1 do
+        result[j] = arr[j]
+    end
+
+    result[pos] = v
+
+    for j = pos, n do
+        result[j + 1] = arr[j]
+    end
+
+    return result
+end
+
 pub.isEmpty = function(arr)
     return type(arr) ~= "table" or arr[1] == nil
 end
