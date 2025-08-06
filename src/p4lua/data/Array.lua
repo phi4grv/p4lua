@@ -70,6 +70,21 @@ pub.isEmpty = function(arr)
     return type(arr) ~= "table" or arr[1] == nil
 end
 
+pub.snoc = function(v, arr)
+    if (arr == nil) then
+        return function(arr2)
+            return pub.snoc(v, arr2)
+        end
+    end
+
+    local result = {}
+    for i = 1, #arr do
+        result[i] = arr[i]
+    end
+    result[#arr + 1] = v
+    return result
+end
+
 pub.zipWith = function(fs, ...)
     local args = { ... }
     local result = {}

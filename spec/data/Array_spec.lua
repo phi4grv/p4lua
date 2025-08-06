@@ -133,6 +133,33 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.snoc", function()
+
+        it("works on empty array", function()
+            local arr = {}
+            local actual = Array.snoc(1, arr)
+            assert.same({ 1 }, actual)
+            assert.same({}, arr)
+        end)
+
+        it("returns a new array with the element appended", function()
+            local arr = {1, 2, 3}
+            local actual = Array.snoc(4, arr)
+
+            assert.same({1, 2, 3, 4}, actual)
+            assert.same({1, 2, 3}, arr)
+        end)
+
+        it("supports curry", function()
+            local arr = { 1, 2 }
+            local actual = Array.snoc(3)(arr)
+
+            assert.same({ 1, 2, 3 }, actual)
+            assert.same({ 1, 2 }, arr)
+        end)
+
+    end)
+
     describe("p4lua.data.Array.zipWith", function()
 
         describe("p4lua.data.Array.zipWith with single parameter functions", function()
