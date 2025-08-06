@@ -3,6 +3,22 @@ local Maybe = require("p4lua.data.Maybe")
 
 local pub = {}
 
+pub.delete = function(k, m)
+    if m == nil then
+        return function(m2)
+            return pub.delete(k, m2)
+        end
+    end
+
+    local result = {}
+    for key, value in pairs(m) do
+        if key ~= k then
+            result[key] = value
+        end
+    end
+    return result
+end
+
 pub.empty = function()
     return {}
 end

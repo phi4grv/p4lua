@@ -7,6 +7,40 @@ describe("p4lua.data.Map", function()
 
     local Map = require("p4lua.data.Map")
 
+    describe("Map.delete", function()
+        it("removes an existing key from the map", function()
+            local m = { a = 1, b = 2, c = 3 }
+            local actual = Map.delete("b", m)
+
+            assert.same({ a = 1, c = 3 }, actual)
+            assert.same({ a = 1, b = 2, c = 3 }, m)
+        end)
+
+        it("does nothing if the key does not exist", function()
+            local m = { a = 1, b = 2 }
+            local actual = Map.delete("missing", m)
+
+            assert.same({ a = 1, b = 2 }, actual)
+            assert.not_equal(m, actual)
+        end)
+
+        it("works with an empty map", function()
+            local empty = {}
+            local actual = Map.delete("x", empty)
+
+            assert.same({}, actual)
+            assert.not_equal(empty, actual)
+        end)
+
+        it("supports currying", function()
+            local m = { a = 1, b = 2, c = 3 }
+            local actual = Map.delete("b")(m)
+
+            assert.same({ a = 1, c = 3 }, actual)
+            assert.same({ a = 1, b = 2, c = 3 }, m)
+        end)
+    end)
+
     describe("Map.fold", function()
 
         it("sums all values in the map", function()
