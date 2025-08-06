@@ -4,6 +4,32 @@ describe("p4lua.data.Array", function()
 
     local Array = require("p4lua.data.Array")
 
+    describe("Array.cons", function()
+
+        it("works on empty array", function()
+            local arr = {}
+            local actual = Array.cons(1, arr)
+            assert.same({ 1 }, actual)
+            assert.same({}, arr)
+        end)
+
+        it("returns a new array with the element prepended", function()
+            local arr = { 2, 3, 4 }
+            local actual = Array.cons(1, arr)
+            assert.same({ 1, 2, 3, 4 }, actual)
+            assert.same({ 2, 3, 4 }, arr)
+        end)
+
+        it("supports curry", function()
+            local arr = { 2, 3 }
+            local actual = Array.cons(1)(arr)
+
+            assert.same({ 1, 2, 3 }, actual)
+            assert.same({ 2, 3 }, arr)
+        end)
+
+    end)
+
     describe("Array.fmap", function()
 
         local double = function(x) return x * 2 end

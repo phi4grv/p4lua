@@ -1,5 +1,19 @@
 local pub = {}
 
+pub.cons = function(v, arr)
+    if (arr == nil) then
+        return function(arr2)
+            return pub.cons(v, arr2)
+        end
+    end
+
+    local result = { v }
+    for i = 1, #arr do
+        result[i + 1] = arr[i]
+    end
+    return result
+end
+
 pub.fmap = function(f, arr)
     if (arr == nil) then
         return function(arr2)
