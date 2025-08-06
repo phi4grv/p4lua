@@ -11,4 +11,15 @@ pub.cons = function(v, arr)
     return arr
 end
 
+pub.snoc = function(v, arr)
+    if (arr == nil) then
+        return function(arr2)
+            return pub.snoc(v, arr2)
+        end
+    end
+
+    table.insert(arr, v)
+    return arr
+end
+
 return pub

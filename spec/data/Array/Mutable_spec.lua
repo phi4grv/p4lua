@@ -28,4 +28,31 @@ describe("p4lua.data.Array.Mutable", function()
         end)
 
     end)
+
+    describe("Array.Mutable.snoc", function()
+
+        it("works on empty array", function()
+            local arr = {}
+            local actual = MutableArray.snoc(1, arr)
+            assert.same({ 1 }, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("returns a new array with the element appended", function()
+            local arr = {1, 2, 3}
+            local actual = MutableArray.snoc(4, arr)
+
+            assert.same({1, 2, 3, 4}, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("supports curry", function()
+            local arr = { 1, 2 }
+            local actual = MutableArray.snoc(3)(arr)
+
+            assert.same({ 1, 2, 3 }, actual)
+            assert.equal(arr, actual)
+        end)
+
+    end)
 end)
