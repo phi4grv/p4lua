@@ -29,6 +29,66 @@ describe("p4lua.data.Array.Mutable", function()
 
     end)
 
+    describe("Array.Mutable.insert", function()
+
+        it("inserts into an empty array at index 1", function()
+            local arr = {}
+            local actual = MutableArray.insert(1, "v", arr)
+
+            assert.same({ "v" }, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("inserts at the beginning when index < 1", function()
+            local arr = { "b", "c" }
+            local actual = MutableArray.insert(0, "a", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("inserts at the beginning when index == 1", function()
+            local arr = { "b", "c" }
+            local actual = MutableArray.insert(1, "a", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("inserts in the middle", function()
+            local arr = { "a", "c" }
+            local actual = MutableArray.insert(2, "b", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("inserts at the end when index == length + 1", function()
+            local arr = { "a", "b" }
+            local actual = MutableArray.insert(3, "c", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("inserts at the end when index > length + 1", function()
+            local arr = { "a", "b" }
+            local actual = MutableArray.insert(5, "c", arr)
+
+            assert.same({ "a", "b", "c" }, actual)
+            assert.equal(arr, actual)
+        end)
+
+        it("supports curry", function()
+            local arr = { "a", "c" }
+
+            assert.same({ "a", "b", "c" }, MutableArray.insert(2)("b")(arr))
+            assert.same({ "a", "b2", "b", "c" }, MutableArray.insert(2)("b2", arr))
+            assert.same({ "a", "b3", "b2", "b", "c" }, MutableArray.insert(2, "b3")(arr))
+        end)
+
+    end)
+
     describe("Array.Mutable.snoc", function()
 
         it("works on empty array", function()
