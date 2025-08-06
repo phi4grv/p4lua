@@ -21,6 +21,7 @@ build = {
       ["p4lua.adt"] = "src/p4lua/adt.lua",
       ["p4lua.compat"] = "src/p4lua/compat.lua",
       ["p4lua.data.Array"] = "src/p4lua/data/Array.lua",
+      ["p4lua.data.Array.Mutable"] = "src/p4lua/data/Array/Mutable.lua",
       ["p4lua.data.Map"] = "src/p4lua/data/Map.lua",
       ["p4lua.data.Map.Mutable"] = "src/p4lua/data/Map/Mutable.lua",
       ["p4lua.data.Maybe"] = "src/p4lua/data/Maybe.lua",
