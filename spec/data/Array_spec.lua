@@ -1,8 +1,34 @@
 local assert = require("luassert")
+local Maybe = require("p4lua.data.Maybe")
+local Just = Maybe.Just
+local Nothing = Maybe.Nothing
 
 describe("p4lua.data.Array", function()
 
     local Array = require("p4lua.data.Array")
+
+    describe("Array.at", function()
+
+        it("returns Just(value) for valid index", function()
+            local arr = {"a", "b", "c"}
+            assert.same(Just("a"), Array.at(1, arr))
+            assert.same(Just("c"), Array.at(3, arr))
+        end)
+
+        it("returns Nothing for index out of bounds", function()
+            local arr = {"a", "b", "c"}
+            assert.same(Nothing, Array.at(0, arr))
+            assert.same(Nothing, Array.at(4, arr))
+            assert.same(Nothing, Array.at(-1, arr))
+        end)
+
+        it("supports curry", function()
+            local arr = { "v" }
+
+            assert.same(Just("v"), Array.at(1)(arr))
+            assert.same(Nothing, Array.at(2)(arr))
+        end)
+    end)
 
     describe("Array.cons", function()
 

@@ -1,5 +1,19 @@
 local pub = {}
 
+pub.at = function(i, arr)
+    if arr == nil then
+        return function(arr2)
+            return pub.at(i, arr2)
+        end
+    end
+
+    if i >= 1 and i <= #arr then
+        return require("p4lua.data.Maybe").Just(arr[i])
+    else
+        return require("p4lua.data.Maybe").Nothing
+    end
+end
+
 pub.cons = function(v, arr)
     if (arr == nil) then
         return function(arr2)
