@@ -1,15 +1,6 @@
-local pub = {
-    lua_version = _VERSION:match("%d+%.%d+")
-}
+local pub = { }
 
-if not table.unpack and unpack then
-    table.unpack = unpack
-end
-
-if not table.pack then
-    table.pack = function(...)
-        return { n = select('#', ...), ... }
-    end
-end
+pub.lua_version = _VERSION:match("%d+%.%d+")
+pub.table = require("p4lua.compat.table")
 
 return pub
