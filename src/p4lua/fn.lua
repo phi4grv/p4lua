@@ -1,4 +1,4 @@
-require("p4lua.compat")
+require("p4lua.compat.table")
 
 local pub = {}
 
@@ -48,31 +48,29 @@ pub.const = function(x)
     end
 end
 
-pub.curry = function(fn, arity)
-    arity = arity or debug.getinfo(fn, "u").nparams or 1
+pub.curry = function(arity, f)
+    if (arity <= 0) then
+        error(("curry: arg#1 must be positive integer, got %s"):format(tostring(arity)))
+    end
 
-    local function curried(argsSoFar)
+    local function curried(...)
+        local cargs = { ... }
+        if (#cargs >= arity) then
+            return f(...)
+        end
+        if (#cargs == 0) then
+            error("curried function: at least one argument required")
+        end
+
         return function(...)
-            -- copy previous args to avoid shared mutation
-            local args = {}
-            for i = 1, #argsSoFar do
-                args[i] = argsSoFar[i]
-            end
-
-            -- append new args
-            local newArgs = table.pack(...)
-            for i = 1, newArgs.n do
-                args[#args + 1] = newArgs[i]
-            end
-
-            if #args >= arity then
-                return fn(table.unpack(args, 1, arity))
-            else
-                return curried(args)
-            end
+            local args = { ... }
+            local nargs = { table.unpack(cargs) }
+            table.move(args, 1, #args, #nargs + 1, nargs)
+            return curried(table.unpack(nargs))
         end
     end
-    return curried({})
+
+    return curried
 end
 
 pub.flip = function(f)
