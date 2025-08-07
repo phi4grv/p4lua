@@ -172,12 +172,14 @@ describe("p4lua.fn", function()
         it("flips arguments of a normal two-argument function", function()
             local function f(a, b) return a - b end
             local flipped = p4fn.flip(f)
+
             assert.equal(flipped(5, 3), -2)
         end)
 
         it("works with 3 arguments", function()
             local function f(a, b, c) return a - b + c end
             local flipped = p4fn.flip(f)
+
             assert.equal(flipped(5, 3, 1), -1)
         end)
 
@@ -193,20 +195,11 @@ describe("p4lua.fn", function()
             local function f(a, b, c) return a - b + c end
             local curried = p4fn.curry(3, f)
             local flipped = p4fn.flip(curried)
+
             assert.equal(flipped(5, 3, 1), -1)
             assert.equal(flipped(5)(3)(1), -1)
-        end)
-
-        it("returns itself when called with no arguments (acts like id)", function()
-            local function f(a, b) return a .. b end
-            local flipped = p4fn.flip(f)
-
-            -- When called with no arguments, it should return itself (like an identity function)
-            local again = flipped()
-            assert.equal(type(again), "function")
-
-            -- The returned function should still work correctly when given arguments
-            assert.equal(again("world", "hello "), "hello world")
+            assert.equal(flipped(5)(3, 1), -1)
+            assert.equal(flipped(5, 3)(1), -1)
         end)
 
     end)
@@ -219,7 +212,7 @@ describe("p4lua.fn", function()
             assert.equal(true, p4fn.id(true))
 
             local tbl = { a = 1 }
-            assert.same(tbl, p4fn.id(tbl))
+            assert.equal(tbl, p4fn.id(tbl))
         end)
 
     end)

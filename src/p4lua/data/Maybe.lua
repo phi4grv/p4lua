@@ -34,17 +34,7 @@ pub.catMaybes = function(m)
     end, {}, m)
 end
 
-pub.equalsWith = function(eq, ma, mb)
-    if (mb == nil) then
-        if (ma == nil) then
-            return function(ma2, mb2)
-                return pub.equalsWith(eq, ma2, mb2)
-            end
-        end
-        return function(mb2)
-            return pub.equalsWith(eq, ma, mb2)
-        end
-    end
+local function equalsWith(eq, ma, mb)
     return match({
         Just = function(a)
             return match({
@@ -60,6 +50,8 @@ pub.equalsWith = function(eq, ma, mb)
         end
     }, ma)
 end
+
+pub.equalsWith = p4fn.curry(3, equalsWith)
 
 pub.equals = pub.equalsWith(function(a, b) return a == b end)
 
@@ -78,12 +70,6 @@ pub.fromMaybe = function(default, m)
 end
 
 pub.mapMaybe = function(f, arr)
-    if arr == nil then
-        return function(arr2)
-            return pub.mapMaybe(f, arr2)
-        end
-    end
-
     return Array.foldl(function(acc, a)
         return match({
             Just = function(v)

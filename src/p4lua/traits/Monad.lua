@@ -1,17 +1,9 @@
+local p4fn = require("p4lua.fn")
+
 local pub = {}
 
 pub.makeChainBind = function(bind)
     local function chainBind(fs, m)
-        if m == nil then
-            return function(actualM)
-                return chainBind(fs, actualM)
-            end
-        end
-
-        if (type(fs) ~= "table") then
-            fs = { fs } -- wrap single function or nil as a table
-        end
-
         local result = m
         for _, f in ipairs(fs) do
             result = bind(result, f)
@@ -19,7 +11,7 @@ pub.makeChainBind = function(bind)
         return result
     end
 
-    return chainBind
+    return p4fn.curry(2, chainBind)
 end
 
 local function kleisliCompose(bind, f, g)

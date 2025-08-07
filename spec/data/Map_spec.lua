@@ -105,18 +105,23 @@ describe("p4lua.data.Map", function()
         end)
 
         it("should return an empty Map when no keys are provided", function()
-            local map = { k = "v" }
-            assert.are.same(Map.filterByKeys(map, {}), {})
+            local m = { k = "v" }
+            assert.are.same(Map.filterByKeys({}, m), {})
         end)
 
         it("should return an empty Map if none of the keys match", function()
-            local map = { k = "v" }
-            assert.are.same(Map.filterByKeys(map, { "no matching key"}), {})
+            local m = { k = "v" }
+            assert.are.same(Map.filterByKeys({ "no matching key"}, m), {})
         end)
         --
         it("should return the Map with matched keys", function()
-            local map = { k1 = "v1", k2 = "v2" }
-            assert.are.same(Map.filterByKeys(map, { "k1" }), { k1 = "v1" })
+            local m = { k1 = "v1", k2 = "v2" }
+            assert.are.same(Map.filterByKeys({ "k1" }, m), { k1 = "v1" })
+        end)
+
+        it("supports curry", function()
+            local m = { k1 = "v1", k2 = "v2" }
+            assert.are.same(Map.filterByKeys({ "k1" })(m), { k1 = "v1" })
         end)
 
     end)
@@ -239,29 +244,29 @@ describe("p4lua.data.Map", function()
             local m = { a = 1, b = 2, c = 3 }
             local ks = { "b", "c" }
 
-            local actual = Map.valuesByKeys(m, ks)
+            local actual = Map.valuesByKeys(ks, m)
             assert.same({ Just(2), Just(3) }, actual)
         end)
 
         it("return Maybe.Nothing if keys not exists in the map", function()
-            local actual = Map.valuesByKeys({}, { "k1", "k2" })
+            local actual = Map.valuesByKeys({ "k1", "k2" }, {})
             assert.same({ Nothing, Nothing }, actual)
-        end)
-
-        it("return Maybe.Nothing if keys not exists in the map", function()
-            local m = { a = 1, b = 2 }
-            local ks = { "b", "not exists", "a" }
-
-            local actual = Map.valuesByKeys(m, ks)
-            assert.same({ Just(2), Nothing, Just(1) }, actual)
         end)
 
         it("returns empty array if keys list is empty", function()
             local m = { a = 1 }
-            local keys = {}
+            local ks = {}
 
-            local vals = Map.valuesByKeys(m, keys)
+            local vals = Map.valuesByKeys(ks, m)
             assert.same({}, vals)
+        end)
+
+        it("supports curry", function()
+            local m = { a = 1, b = 2 }
+            local ks = { "b", "not exists", "a" }
+
+            local actual = Map.valuesByKeys(ks)(m)
+            assert.same({ Just(2), Nothing, Just(1) }, actual)
         end)
 
     end)

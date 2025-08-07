@@ -1,30 +1,19 @@
+local p4fn = require("p4lua.fn")
+
 local pub = {}
 
-pub.delete = function(k, m)
-    if m == nil then
-        return function(m2)
-            return pub.delete(k, m2)
-        end
-    end
-
+local function delete(k, m)
     m[k] = nil
     return m
 end
 
-pub.insert = function(k, v, m)
-    if (m == nil) then
-        if (v == nil) then
-            return function(v2, m2)
-                return pub.insert(k, v2, m2)
-            end
-        end
-        return function(m2)
-            return pub.insert(k, v, m2)
-        end
-    end
+pub.delete = p4fn.curry(2, delete)
 
+local function insert(k, v, m)
     m[k] = v
     return m
 end
+
+pub.insert = p4fn.curry(3, insert)
 
 return pub

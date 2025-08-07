@@ -160,25 +160,4 @@ describe("makeChainBind", function()
         assert.same(Maybe.Just(42), curriedResult)
     end)
 
-    it("returns identity function when called with nil", function()
-        local result = chainBind(nil, Maybe.Just("hello"))
-        assert.are.same(Maybe.Just("hello"), result)
-
-        local curriedResult = chainBind(nil)(Maybe.Just("hello"))
-        assert.are.same(Maybe.Just("hello"), curriedResult)
-    end)
-
-    it("returns identity function when called with no args", function()
-        local curriedResult = chainBind()(Maybe.Just("hello"))
-        assert.are.same(Maybe.Just("hello"), curriedResult)
-    end)
-
-    it("supports a single function instead of a list", function()
-        local result = chainBind(f3, Maybe.Just(10)) -- f3: x - 3 → 7
-        assert.same(Maybe.Just(7), result)
-
-        local curriedResult = chainBind(f3)(Maybe.Just(10))
-        assert.same(Maybe.Just(7), curriedResult)
-    end)
-
 end)

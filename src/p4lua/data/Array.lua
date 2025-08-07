@@ -1,12 +1,8 @@
+local p4fn = require("p4lua.fn")
+
 local pub = {}
 
-pub.at = function(i, arr)
-    if arr == nil then
-        return function(arr2)
-            return pub.at(i, arr2)
-        end
-    end
-
+local function at(i, arr)
     if i >= 1 and i <= #arr then
         return require("p4lua.data.Maybe").Just(arr[i])
     else
@@ -14,13 +10,9 @@ pub.at = function(i, arr)
     end
 end
 
-pub.cons = function(v, arr)
-    if (arr == nil) then
-        return function(arr2)
-            return pub.cons(v, arr2)
-        end
-    end
+pub.at = p4fn.curry(2, at)
 
+local function cons(v, arr)
     local result = { v }
     for i = 1, #arr do
         result[i + 1] = arr[i]
@@ -28,7 +20,9 @@ pub.cons = function(v, arr)
     return result
 end
 
-pub.fmap = function(f, arr)
+pub.cons = p4fn.curry(2, cons)
+
+local function fmap(f, arr)
     if (arr == nil) then
         return function(arr2)
             return pub.fmap(f, arr2)
@@ -42,18 +36,9 @@ pub.fmap = function(f, arr)
     return result
 end
 
-pub.foldl = function(ff, acc, arr)
-    if arr == nil then
-        if (acc == nil) then
-            return function(acc2, arr2)
-                return pub.foldl(ff, acc2, arr2)
-            end
-        end
-        return function(arr2)
-            return pub.foldl(ff, acc, arr2)
-        end
-    end
+pub.fmap = p4fn.curry(2, fmap)
 
+local function foldl(ff, acc, arr)
     local result = acc
     for i = 1, #arr do
         result = ff(result, arr[i])
@@ -61,18 +46,9 @@ pub.foldl = function(ff, acc, arr)
     return result
 end
 
-pub.foldr = function(ff, acc, arr)
-    if arr == nil then
-        if (acc == nil) then
-            return function(acc2, arr2)
-                return pub.foldr(ff, acc2, arr2)
-            end
-        end
-        return function(arr2)
-            return pub.foldr(ff, acc, arr2)
-        end
-    end
+pub.foldl = p4fn.curry(3, foldl)
 
+local function foldr(ff, acc, arr)
     local result = acc
     for i = #arr, 1, -1 do
         result = ff(arr[i], result)
@@ -80,18 +56,9 @@ pub.foldr = function(ff, acc, arr)
     return result
 end
 
-pub.insert = function(i, v, arr)
-    if (arr == nil) then
-        if (v == nil) then
-            return function(v2, arr2)
-                return pub.insert(i, v2, arr2)
-            end
-        end
-        return function(arr2)
-            return pub.insert(i, v, arr2)
-        end
-    end
+pub.foldr = p4fn.curry(3, foldr)
 
+local function insert(i, v, arr)
     local n = #arr
     local pos
     if i < 1 then
@@ -116,17 +83,13 @@ pub.insert = function(i, v, arr)
     return result
 end
 
+pub.insert = p4fn.curry(3, insert)
+
 pub.isEmpty = function(arr)
     return type(arr) ~= "table" or arr[1] == nil
 end
 
-pub.snoc = function(v, arr)
-    if (arr == nil) then
-        return function(arr2)
-            return pub.snoc(v, arr2)
-        end
-    end
-
+local function snoc(v, arr)
     local result = {}
     for i = 1, #arr do
         result[i] = arr[i]
@@ -134,6 +97,8 @@ pub.snoc = function(v, arr)
     result[#arr + 1] = v
     return result
 end
+
+pub.snoc = p4fn.curry(2, snoc)
 
 pub.zipWith = function(fs, ...)
     local args = { ... }

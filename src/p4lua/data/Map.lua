@@ -1,15 +1,10 @@
+local p4fn = require("p4lua.fn")
 local Array = require("p4lua.data.Array")
 local Maybe = require("p4lua.data.Maybe")
 
 local pub = {}
 
-pub.delete = function(k, m)
-    if m == nil then
-        return function(m2)
-            return pub.delete(k, m2)
-        end
-    end
-
+local function delete(k, m)
     local result = {}
     for key, value in pairs(m) do
         if key ~= k then
@@ -19,29 +14,22 @@ pub.delete = function(k, m)
     return result
 end
 
+pub.delete = p4fn.curry(2, delete)
+
 pub.empty = function()
     return {}
 end
 
-pub.fold = function(f, acc, map)
-    if map == nil then
-        if acc == nil then
-            return function(a, m)
-                return pub.fold(f, a, m)
-            end
-        end
-        return function(m)
-            return pub.fold(f, acc, m)
-        end
-    end
-
+local function fold(f, acc, map)
     for k, v in pairs(map) do
         acc = f(acc, k, v)
     end
     return acc
 end
 
-pub.filterByKeys = function(m, ks)
+pub.fold = p4fn.curry(3, fold)
+
+local function filterByKeys(ks, m)
     local result = {}
     for _, k in ipairs(ks) do
         if m[k] then
@@ -51,18 +39,9 @@ pub.filterByKeys = function(m, ks)
     return result
 end
 
-pub.insert = function(k, v, m)
-    if (m == nil) then
-        if (v == nil) then
-            return function(v2, m2)
-                return pub.insert(k, v2, m2)
-            end
-        end
-        return function(m2)
-            return pub.insert(k, v, m2)
-        end
-    end
+pub.filterByKeys = p4fn.curry(2, filterByKeys)
 
+local function insert(k, v, m)
     local newMap = {}
     for key, val in pairs(m) do
         newMap[key] = val
@@ -72,13 +51,9 @@ pub.insert = function(k, v, m)
     return newMap
 end
 
-pub.lookup = function(k, m)
-    if m == nil then
-        return function(m2)
-            return pub.lookup(k, m2)
-        end
-    end
+pub.insert = p4fn.curry(3, insert)
 
+local function lookup(k, m)
     local v = m[k]
     if v == nil then
         return Maybe.Nothing
@@ -86,6 +61,8 @@ pub.lookup = function(k, m)
         return Maybe.Just(v)
     end
 end
+
+pub.lookup = p4fn.curry(2, lookup)
 
 pub.values = function(m)
     local result = {}
@@ -98,16 +75,12 @@ pub.values = function(m)
 end
 
 -- valuesByKeys :: Map k v -> [k] -> [Maybe v]
-pub.valuesByKeys = function(m, ks)
-    if ks == nil then
-        return function(ks2)
-            return pub.valuesByKeys(m, ks2)
-        end
-    end
-
+local function valuesByKeys(ks, m)
     return Array.fmap(function(k)
         return pub.lookup(k, m)
     end, ks)
 end
+
+pub.valuesByKeys = p4fn.curry(2, valuesByKeys)
 
 return pub
