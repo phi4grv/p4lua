@@ -4,6 +4,32 @@ describe("p4lua.data.Array.Mutable", function()
 
     local MutableArray = require("p4lua.data.Array.Mutable")
 
+    describe("Array.Mutable.append", function()
+
+        local cases = {
+            { { 1, 2, 3 }, { 4, 5 }, { 1, 2, 3, 4, 5 } },
+            { {}, { 1, 2, 3 }, { 1, 2, 3 } },
+            { { 1, 2, 3 }, {}, { 1, 2, 3 } },
+            { {}, {}, {} },
+            { { 1, "a" }, { true, { } }, { 1, "a", true, { } } },
+            { { 1, nil, 3 }, { 4, 5 }, { 1, 4, 5 } },
+            { { 1, 2 }, { nil, 4, 5 }, { 1, 2 } },
+            { { 1, nil, 3 }, { nil, 4, nil }, { 1, nil, 3 } } --WRANING: special case
+        }
+
+        for i, case in ipairs(cases) do
+            it("case #" .. i, function()
+                local arr1, arr2, expected = table.unpack(case)
+
+                local result = MutableArray.append(arr1, arr2)
+
+                assert.same(expected, result)
+                assert.equal(arr1, result)
+            end)
+        end
+
+    end)
+
     describe("Array.Mutable.cons", function()
 
         it("works on empty array", function()
