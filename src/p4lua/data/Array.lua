@@ -89,6 +89,14 @@ pub.isEmpty = function(arr)
     return type(arr) ~= "table" or arr[1] == nil
 end
 
+pub.length = function(arr)
+    local i = 1
+    while arr[i] ~= nil do
+        i = i + 1
+    end
+    return i - 1
+end
+
 local function snoc(v, arr)
     local result = {}
     for i = 1, #arr do

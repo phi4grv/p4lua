@@ -219,6 +219,30 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.length", function()
+
+        it("returns 0 for an empty array", function()
+            assert.equal(0, Array.length({}))
+        end)
+
+        it("returns 0 if the first element is nil", function()
+            assert.equal(0, Array.length({ nil, 2, 3 }))
+        end)
+
+        it("returns the correct length for a non-empty array", function()
+            assert.equal(3, Array.length({ 1, 2, 3 }))
+        end)
+
+        it("works with arrays containing mixed types", function()
+            assert.equal(4, Array.length({ 1, "a", true, {} }))
+        end)
+
+        it("counts up to the first nil in the sequence", function()
+            assert.equal(1, Array.length({ 1, nil, 3 }))
+        end)
+
+    end)
+
     describe("Array.snoc", function()
 
         it("works on empty array", function()
