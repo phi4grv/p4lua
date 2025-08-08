@@ -81,6 +81,32 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.fromTable", function()
+
+        local cases = {
+            { { 1, 2, 3 }, { 1, 2, 3 } },
+            { { 1, 2, nil, 3 }, { 1, 2 } },
+            { { nil, 2, 3 }, {} },
+            { {}, {} },
+            { { 1, "a", true, {}, nil, "after nil" }, { 1, "a", true, {} } },
+        }
+
+        for i, case in ipairs(cases) do
+            it("case #" .. i, function()
+                local input, expected = table.unpack(case)
+                ---@cast input table
+                local inputCopy = { table.unpack(input) }
+
+                local actual = Array.fromTable(input)
+
+                assert.same(expected, actual)
+                assert.not_equal(input, actual)
+                assert.same(input, inputCopy)
+            end)
+        end
+
+    end)
+
     describe("foldl", function()
         local ff = function(acc, v) return acc - v end
 

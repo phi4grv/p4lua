@@ -83,6 +83,17 @@ local function insert(i, v, arr)
     return result
 end
 
+pub.fromTable = function(arr)
+    local result = {}
+    local i = 1
+
+    while arr[i] ~= nil do
+        result[i] = arr[i]
+        i = i + 1
+    end
+    return result
+end
+
 pub.insert = p4fn.curry(3, insert)
 
 pub.isEmpty = function(arr)
