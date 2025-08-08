@@ -2,6 +2,18 @@ local p4fn = require("p4lua.fn")
 
 local pub = {}
 
+local function append(arr1, arr2)
+    local result = pub.fromTable(arr1)
+
+    for _, v in ipairs(arr2) do
+        table.insert(result, v)
+    end
+
+    return result
+end
+
+pub.append = p4fn.curry(2, append)
+
 local function at(i, arr)
     if i >= 1 and i <= #arr then
         return require("p4lua.data.Maybe").Just(arr[i])

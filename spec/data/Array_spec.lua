@@ -7,6 +7,43 @@ describe("p4lua.data.Array", function()
 
     local Array = require("p4lua.data.Array")
 
+    describe("Array.append", function()
+
+        local cases = {
+            { { 1, 2, 3 }, { 4, 5 }, { 1, 2, 3, 4, 5 } },
+            { {}, { 1, 2, 3 }, { 1, 2, 3 } },
+            { { 1, 2, 3 }, {}, { 1, 2, 3 } },
+            { {}, {}, {} },
+            { { 1, "a" }, { true, { } }, { 1, "a", true, { } } },
+            { { 1, nil, 3 }, { 4, 5 }, { 1, 4, 5 } },
+            { { 1, 2 }, { nil, 4, 5 }, { 1, 2 } },
+            { { 1, nil, 3 }, { nil, 4, nil }, { 1 } },
+        }
+
+        for i, case in ipairs(cases) do
+            it("case #" .. i, function()
+                local arr1, arr2, expected = table.unpack(case)
+                ---@cast arr1 table
+                local arr1Copy = { table.unpack(arr1) }
+                ---@cast arr2 table
+                local arr2Copy = { table.unpack(arr2) }
+
+                local result = Array.append(arr1, arr2)
+
+                assert.same(expected, result)
+                assert.not_equal(arr1, result)
+                assert.same(arr1Copy, arr1)
+                assert.not_equal(arr2, result)
+                assert.same(arr2Copy, arr2)
+            end)
+        end
+
+        it("supports curry", function()
+            assert.same({ 1, 2 }, Array.append({ 1 })({ 2 }))
+        end)
+
+    end)
+
     describe("Array.at", function()
 
         it("returns Just(value) for valid index", function()
