@@ -71,50 +71,34 @@ end
 
 pub.fmap = p4fn.curry(2, fmap)
 
-local function foldl(ff, acc, arr)
-    local result = acc
-    for i = 1, #arr do
-        result = ff(result, arr[i])
+local function foldAccHandler(acc)
+    if type(acc) == "table" then
+        return require("p4lua.data.Map").deepCopy(acc)
     end
-    return result
+    return acc
 end
 
-pub.foldl = p4fn.curry(3, foldl)
+local function foldl(ff, acc, arr)
+    local i = 1
+    while arr[i] ~= nil do
+        acc = ff(acc, arr[i])
+        i = i + 1
+    end
+    return acc
+end
+
+pub.foldl = p4fn.curry({ p4fn.id, foldAccHandler }, foldl)
 
 local function foldr(ff, acc, arr)
-    local result = acc
-    for i = #arr, 1, -1 do
-        result = ff(arr[i], result)
+    local len = pub.length(arr)
+
+    for i = len, 1, -1 do
+        acc = ff(arr[i], acc)
     end
-    return result
+    return acc
 end
 
-pub.foldr = p4fn.curry(3, foldr)
-
-local function insert(i, v, arr)
-    local n = #arr
-    local pos
-    if i < 1 then
-        pos = 1
-    elseif i > n + 1 then
-        pos = n + 1
-    else
-        pos = i
-    end
-
-    local result = {}
-    for j = 1, pos - 1 do
-        result[j] = arr[j]
-    end
-
-    result[pos] = v
-
-    for j = pos, n do
-        result[j + 1] = arr[j]
-    end
-
-    return result
-end
+pub.foldr = p4fn.curry({ p4fn.id, foldAccHandler }, foldr)
 
 pub.fromTable = function(arr)
     return select(1, pub.fromTableWithLength(arr))
@@ -143,6 +127,31 @@ pub.fromVargs = function(...)
         result[i] = v
         i = i + 1
     end
+    return result
+end
+
+local function insert(i, v, arr)
+    local n = #arr
+    local pos
+    if i < 1 then
+        pos = 1
+    elseif i > n + 1 then
+        pos = n + 1
+    else
+        pos = i
+    end
+
+    local result = {}
+    for j = 1, pos - 1 do
+        result[j] = arr[j]
+    end
+
+    result[pos] = v
+
+    for j = pos, n do
+        result[j + 1] = arr[j]
+    end
+
     return result
 end
 
