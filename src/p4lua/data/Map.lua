@@ -60,6 +60,8 @@ end
 
 pub.equalsWith = p4fn.curry(3, equalsWith)
 
+pub.equals = pub.equalsWith(function(v1, v2) return v1 == v2 end)
+
 local function fold(f, acc, map)
     for k, v in pairs(map) do
         acc = f(acc, k, v)

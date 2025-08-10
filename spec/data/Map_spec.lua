@@ -99,6 +99,21 @@ describe("p4lua.data.Map", function()
 
     end)
 
+    describe("Map.equals", function()
+
+        it("compare using ==", function()
+            assert.is_true(Map.equals({ k = "v" }, { k = "v" }))
+            assert.is_false(Map.equals({ a = {} }, { a = {} }))
+        end)
+
+        it("supports curry", function()
+            local eq1 = Map.equals({ a = "v" })
+            assert.is_true(eq1({ a = "v" }))
+            assert.is_false(eq1({ a = "x" }))
+        end)
+
+    end)
+
     describe("Map.equalsWith", function()
 
         local simpleEq = function(a, b) return a == b end
