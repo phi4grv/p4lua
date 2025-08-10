@@ -136,6 +136,36 @@ describe("p4lua.data.Array", function()
         end
     end)
 
+    describe("Array.filter", function()
+        local simplePred = function(x) return x % 2 == 0 end
+        local alwaysTrue = function(_) return true end
+        local alwaysFalse = function(_) return false end
+
+        local cases = {
+            { "empty array", alwaysTrue, {}, {} },
+            { "all pass", alwaysTrue, { 1, 2, 3 }, { 1, 2, 3 } },
+            { "some pass", simplePred, { 1, 2, 3, 4, 5 }, { 2, 4 } },
+            { "none pass", alwaysFalse, { 1, 2, 3 }, {} },
+            { "with nil (stops early)", simplePred, { 2, nil, 4 }, { 2 } },
+        }
+
+        for i, case in ipairs(cases) do
+            local desc, pred, input, expected = table.unpack(case)
+
+            it("case #" .. i .. ": " .. desc, function()
+                local actual = Array.filter(pred, input)
+                assert.same(expected, actual)
+            end)
+        end
+
+        it("supports curry", function()
+            local filterEven = Array.filter(simplePred)
+            assert.same({ 2 }, filterEven({ 1, 2 }))
+            assert.same({ 2, 4 }, filterEven({ 1, 2, 3, 4 }))
+        end)
+
+    end)
+
     describe("Array.fmap", function()
 
         local double = function(x) return x * 2 end

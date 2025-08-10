@@ -61,6 +61,22 @@ pub.equalsWith = p4fn.curry(3, equalsWith)
 
 pub.equals = pub.equalsWith(function(a, b) return a == b end)
 
+function filter(pred, arr)
+    local result = {}
+
+    local i = 1
+    while(arr[i] ~= nil) do
+        if pred(arr[i], i) then
+            table.insert(result, arr[i])
+        end
+        i = i + 1
+    end
+
+    return result
+end
+
+pub.filter = p4fn.curry(2, filter)
+
 local function fmap(f, arr)
     local result = {}
     for i = 1, #arr do
