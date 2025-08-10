@@ -299,6 +299,26 @@ describe("p4lua.data.Map", function()
 
     end)
 
+    describe("Map.size", function()
+
+        local cases = {
+            { "empty map", {}, 0 },
+            { "single entry", { a = 1 }, 1 },
+            { "multiple entries", { a = 1, b = 2, c = 3 }, 3 },
+            { "nested table values", { a = {1, 2}, b = 2 }, 2 },
+            { "nil values ignored", { a = 1, b = nil, c = 3 }, 2 },
+        }
+
+        for i, case in ipairs(cases) do
+            local desc, map, expected = table.unpack(case)
+            it(desc, function()
+                local result = Map.size(map)
+                assert.same(expected, result)
+            end)
+        end
+
+    end)
+
     describe("Map.values", function()
 
         it("returns an empty array when the table is empty", function()

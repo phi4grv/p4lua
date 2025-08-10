@@ -92,6 +92,16 @@ pub.shallowCopy = function(m)
     return copy
 end
 
+pub.size = function(m)
+    local count = 0
+
+    for _, _ in pairs(m) do
+        count = count + 1
+    end
+
+    return count
+end
+
 pub.values = function(m)
     local result = {}
     for _, v in pairs(m) do
