@@ -1,30 +1,46 @@
 local assert = require("luassert")
+local Map = require("p4lua.data.Map")
 
 describe("p4lua.data.Array.Mutable", function()
 
     local MutableArray = require("p4lua.data.Array.Mutable")
 
-    describe("Array.Mutable.append", function()
+    describe("Array.Mutable.appendInto", function()
 
         local cases = {
-            { { 1, 2, 3 }, { 4, 5 }, { 1, 2, 3, 4, 5 } },
-            { {}, { 1, 2, 3 }, { 1, 2, 3 } },
-            { { 1, 2, 3 }, {}, { 1, 2, 3 } },
-            { {}, {}, {} },
-            { { 1, "a" }, { true, { } }, { 1, "a", true, { } } },
-            { { 1, nil, 3 }, { 4, 5 }, { 1, 4, 5 } },
-            { { 1, 2 }, { nil, 4, 5 }, { 1, 2 } },
-            { { 1, nil, 3 }, { nil, 4, nil }, { 1, nil, 3 } } --WRANING: special case
+            { "append two non-empty arrays", { 1, 2, 3 }, { 4, 5 }, { 4, 5, 1, 2, 3 } },
+            { "append empty to non-empty", {}, { 1, 2, 3 }, { 1, 2, 3 } },
+            { "append non-empty to empty", { 1, 2, 3 }, {}, { 1, 2, 3 } },
+            { "append empty to empty", {}, {}, {} },
+            { "mixed types", { 1, "a" }, { true, {} }, { true, {}, 1, "a" } },
+            { "nil in first array", { 1, nil, 3 }, { 4, 5 }, { 4, 5, 1 } },
+            { "nil in second array middle", { 1, 2 }, { nil, 4, 5, 6 }, { 1, 2, nil, 6 } },
+            { "nil in both arrays", { 1, nil, 3 }, { nil, 4, nil, 6 }, { 1, nil, nil, 6 } },
         }
 
-        for i, case in ipairs(cases) do
-            it("case #" .. i, function()
-                local arr1, arr2, expected = table.unpack(case)
+        for i, case in ipairs((cases)) do
+            local desc, arr1Org, arr2Org, expectedOrg = table.unpack(case)
 
-                local result = MutableArray.append(arr1, arr2)
+            it("case #" .. i .. ": " .. desc, function()
+                local arr1 = Map.deepCopy(arr1Org)
+                local arr2 = Map.deepCopy(arr2Org)
+                local expected = Map.deepCopy(expectedOrg)
 
-                assert.same(expected, result)
-                assert.equal(arr1, result)
+                local actual = MutableArray.appendInto(arr1, arr2)
+
+                assert.same(expected, actual)
+                assert.equal(arr2, actual)
+            end)
+
+            it("case #" .. i .. " supports curry", function()
+                local arr1 = Map.deepCopy(arr1Org)
+                local arr2 = Map.deepCopy(arr2Org)
+                local expected = Map.deepCopy(expectedOrg)
+
+                local actual = MutableArray.appendInto(arr1)(arr2)
+
+                assert.same(expected, actual)
+                assert.equal(arr2, actual)
             end)
         end
 

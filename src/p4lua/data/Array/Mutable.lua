@@ -1,20 +1,7 @@
 local p4fn = require("p4lua.fn")
 local Array = require("p4lua.data.Array")
+
 local pub = {}
-local p4debug = require("p4lua.debug")
-
-pub.append = function(arr, arr2)
-    local len = 0
-
-    while arr[len + 1] ~= nil do
-        len = len + 1
-    end
-    for i, v in ipairs(arr2) do
-        arr[len + i] = v
-    end
-
-    return arr
-end
 
 local function appendInto(src, dest)
     local srcLen = Array.length(src)
