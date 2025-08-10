@@ -24,10 +24,10 @@ describe("p4lua.data.Array", function()
 
         it("supports curry", function()
             local arr = { "v" }
-
             assert.same(Just("v"), Array.at(1)(arr))
             assert.same(Nothing, Array.at(2)(arr))
         end)
+
     end)
 
     describe("Array.concat", function()
@@ -107,6 +107,7 @@ describe("p4lua.data.Array", function()
     end)
 
     describe("Array.equalsWith", function()
+
         local simpleEq = function(a, b) return a == b end
 
         local cases = {
@@ -134,9 +135,11 @@ describe("p4lua.data.Array", function()
                 assert.equals(expected, Array.equalsWith(eqf, arr1)(arr2))
             end)
         end
+
     end)
 
     describe("Array.filter", function()
+
         local simplePred = function(x) return x % 2 == 0 end
         local alwaysTrue = function(_) return true end
         local alwaysFalse = function(_) return false end
@@ -245,6 +248,7 @@ describe("p4lua.data.Array", function()
     end)
 
     describe("Array.fromVargs", function()
+
         local cases = {
             { {}, {} },
             { { 1, 2, 3 }, { 1, 2, 3 } },
@@ -260,9 +264,11 @@ describe("p4lua.data.Array", function()
                 assert.same(expected, actual)
             end)
         end
+
     end)
 
     describe("foldl", function()
+
         local ff = function(acc, v) return acc - v end
 
         it("folds from the left", function()
@@ -286,9 +292,11 @@ describe("p4lua.data.Array", function()
             assert.equals(-6, Array.foldl(ff)(0, { 1, 2, 3 }))
             assert.equals(-6, Array.foldl(ff, 0)({ 1, 2, 3 }))
         end)
+
     end)
 
     describe("foldr", function()
+
         local ff = function(v, acc) return v - acc end
 
         it("folds from the right", function()
@@ -466,6 +474,7 @@ describe("p4lua.data.Array", function()
     describe("p4lua.data.Array.zipWith", function()
 
         describe("p4lua.data.Array.zipWith with single parameter functions", function()
+
             local add1 = function(x) return x + 1 end
             local mul2 = function(x) return x * 2 end
             local square = function(x) return x ^ 2 end
@@ -496,9 +505,11 @@ describe("p4lua.data.Array", function()
                 local result = Array.zipWith(fs, values)
                 assert.are.same({ 2, 4 }, result)
             end)
+
         end)
 
         describe("p4lua.data.Array.zipWith with two parameter functions", function()
+
             local add = function(a, b) return a + b end
             local mul = function(a, b) return a * b end
             local sub = function(a, b) return a - b end

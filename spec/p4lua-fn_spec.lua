@@ -90,7 +90,7 @@ describe("p4lua.fn", function()
             assert.equal(42, result)
         end)
 
-        it("is curried: chain(fns)(x)", function()
+        it("supports curry: chain(fns)(x)", function()
             local f1 = function(x) return x + 1 end
             local f2 = function(x) return x * 2 end
 

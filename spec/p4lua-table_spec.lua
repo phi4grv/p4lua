@@ -1,8 +1,8 @@
 local assert = require("luassert")
 
-local p4tbl = require("p4lua.table")
-
 describe("p4lua.table.seal", function()
+
+    local p4tbl = require("p4lua.table")
 
     it("returns a readonly proxy table", function()
         local t = { a = 1, b = 2 }
@@ -16,6 +16,7 @@ describe("p4lua.table.seal", function()
     end)
 
     it("raises error if argument is not a table", function()
+        ---@cast p4tbl table
         assert.error_matches(function() p4tbl.seal(123) end, "seal expects a table")
     end)
 
