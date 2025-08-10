@@ -144,6 +144,33 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.fromTableWithLength", function()
+
+        local cases = {
+            { { 1, 2, 3 }, { 1, 2, 3 }, 3 },
+            { { 1, 2, nil, 3 }, { 1, 2 }, 2 },
+            { { nil, 2, 3 }, {}, 0 },
+            { {}, {}, 0 },
+            { { 1, "a", true, {}, nil, "after nil" }, { 1, "a", true, {} }, 4 },
+        }
+
+        for i, case in ipairs(cases) do
+            it("case #" .. i, function()
+                local input, expectedArr, expectedLen = table.unpack(case)
+                ---@cast input table
+                local inputCopy = { table.unpack(input) }
+
+                local actualArr, actualLen = Array.fromTableWithLength(input)
+
+                assert.same(expectedArr, actualArr)
+                assert.equal(expectedLen, actualLen)
+                assert.not_equal(input, actualArr)
+                assert.same(input, inputCopy)
+            end)
+        end
+
+    end)
+
     describe("Array.fromVargs", function()
         local cases = {
             { {}, {} },

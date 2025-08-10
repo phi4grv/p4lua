@@ -96,6 +96,10 @@ local function insert(i, v, arr)
 end
 
 pub.fromTable = function(arr)
+    return select(1, pub.fromTableWithLength(arr))
+end
+
+pub.fromTableWithLength = function(arr)
     local result = {}
     local i = 1
 
@@ -103,7 +107,7 @@ pub.fromTable = function(arr)
         result[i] = arr[i]
         i = i + 1
     end
-    return result
+    return result, i - 1
 end
 
 pub.fromVargs = function(...)
