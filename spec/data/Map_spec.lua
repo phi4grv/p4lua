@@ -209,6 +209,38 @@ describe("p4lua.data.Map", function()
 
     end)
 
+    describe("Map.shallowCopy", function()
+
+        local nested = { x = 10 }
+        local cases = {
+            { "empty map", {} },
+            { "flat map", { a = 1, b = 2, c = 3 } },
+            { "nested map reference", { a = nested, b = 2 } },
+            { "array with no nils", { 1, 2, 3 } },
+            { "array starting with nil", { nil, 2, 3 } },
+            { "array with nil in middle", { 1, nil, 3 } },
+            { "array with trailing nils", { 1, 2, nil } },
+        }
+
+        for i, case in ipairs(cases) do
+            local desc, data = table.unpack(case)
+            it(desc, function()
+                local copy = Map.shallowCopy(data)
+
+                assert.not_equal(data, copy)
+                assert.same(data, copy)
+
+                ---@cast data table
+                for k, v in pairs(data) do
+                    if type(v) == "table" then
+                        assert.equal(v, copy[k])
+                    end
+                end
+            end)
+        end
+
+    end)
+
     describe("Map.values", function()
 
         it("returns an empty array when the table is empty", function()

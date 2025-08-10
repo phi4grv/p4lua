@@ -64,6 +64,16 @@ end
 
 pub.lookup = p4fn.curry(2, lookup)
 
+pub.shallowCopy = function(m)
+    local copy = {}
+
+    for k, v in pairs(m) do
+        copy[k] = v
+    end
+
+    return copy
+end
+
 pub.values = function(m)
     local result = {}
     for _, v in pairs(m) do
