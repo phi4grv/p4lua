@@ -1,4 +1,5 @@
 local assert = require("luassert")
+local spy = require("luassert.spy")
 
 describe("p4lua.fn", function()
 
@@ -163,6 +164,56 @@ describe("p4lua.fn", function()
             assert.error_matches(function()
                 curried()
             end, "curried function: at least one argument required")
+        end)
+
+        it("shares internal mutable state across calls", function()
+            local function addAndMutate(tbl, x)
+                tbl.sum = (tbl.sum or 0) + x
+                return tbl.sum
+            end
+
+            local curried = p4fn.curry(2, addAndMutate)({})
+
+            assert.are.equal(1, curried(1))  -- tbl.sum = 0 + 1 = 1
+            assert.are.equal(2, curried(1))  -- tbl.sum = 1 + 1 = 2
+        end)
+
+        describe("p4lua.fn.curry with argHandlers", function()
+            local function f(tbl, x, y)
+                tbl.x = (tbl.x or 0) + x
+                tbl.y = (tbl.y or 0) + y
+                return tbl
+            end
+            local ah1 = spy.new(function(arg)
+                arg.ah1 = (arg.ah1 or 0) + 1
+                return arg
+            end)
+            local ah2 = spy.new(function(arg) return arg * 2 end)
+
+            it("works", function()
+                local curried = p4fn.curry({ah1, ah2}, f)
+                local c1 = curried({ init = true })
+                local c2 = c1(1)
+                assert.spy(ah1).was.called_with({ init = true })
+                assert.spy(ah2).was_no_called()
+                ah1:clear()
+
+                local output = c2(10)
+                assert.spy(ah1).was.called_with({ init = true, ah1 = 1 })
+                assert.spy(ah2).was.called_with(1)
+                ah1:clear()
+                ah2:clear()
+
+                assert.same(output, { init = true, ah1 = 2, x = 2, y = 10 })
+                assert.spy(ah1).was_no_called()
+                assert.spy(ah2).was_no_called()
+
+                c1(2)
+                assert.spy(ah1).was.called_with({ init = true, ah1 = 2, x = 2, y = 10 })
+                assert.spy(ah2).was_no_called()
+                ah1:clear()
+
+            end)
         end)
 
     end)

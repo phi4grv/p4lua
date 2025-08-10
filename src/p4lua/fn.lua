@@ -2,9 +2,25 @@ require("p4lua.compat.table")
 
 local pub = {}
 
-pub.curry = function(arity, f)
-    if (arity <= 0) then
-        error(("curry: arg#1 must be positive integer, got %s"):format(tostring(arity)))
+pub.id = function(x) return x end
+
+pub.curry = function(arityOrHandlers, f)
+    local arity
+    local argHandlers
+    if type(arityOrHandlers) == "number" then
+        arity = arityOrHandlers
+        if (arity <= 0) then
+            error(("curry: arg#1 must be positive integer, got %s"):format(tostring(arity)))
+        end
+        argHandlers = {}
+        for i = 1, arity - 1 do
+            argHandlers[i] = pub.id
+        end
+    elseif type(arityOrHandlers) == "table" then
+        argHandlers = arityOrHandlers
+        arity = #argHandlers + 1
+    else
+        error(("curry: arg#1 must be number or table, got %s"):format(type(arityOrHandlers)))
     end
 
     local function curried(...)
@@ -18,7 +34,7 @@ pub.curry = function(arity, f)
 
         return function(...)
             local args = { ... }
-            local nargs = { table.unpack(cargs) }
+            local nargs = require("p4lua.data.Array").zipWith(argHandlers, cargs)
             table.move(args, 1, #args, #nargs + 1, nargs)
             return curried(table.unpack(nargs))
         end
@@ -75,7 +91,5 @@ pub.flip =  function(f)
     end
     return pub.curry(2, flipped)
 end
-
-pub.id = function(x) return x end
 
 return pub
