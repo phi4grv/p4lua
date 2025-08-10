@@ -7,43 +7,6 @@ describe("p4lua.data.Array", function()
 
     local Array = require("p4lua.data.Array")
 
-    describe("Array.append", function()
-
-        local cases = {
-            { { 1, 2, 3 }, { 4, 5 }, { 1, 2, 3, 4, 5 } },
-            { {}, { 1, 2, 3 }, { 1, 2, 3 } },
-            { { 1, 2, 3 }, {}, { 1, 2, 3 } },
-            { {}, {}, {} },
-            { { 1, "a" }, { true, { } }, { 1, "a", true, { } } },
-            { { 1, nil, 3 }, { 4, 5 }, { 1, 4, 5 } },
-            { { 1, 2 }, { nil, 4, 5 }, { 1, 2 } },
-            { { 1, nil, 3 }, { nil, 4, nil }, { 1 } },
-        }
-
-        for i, case in ipairs(cases) do
-            it("case #" .. i, function()
-                local arr1, arr2, expected = table.unpack(case)
-                ---@cast arr1 table
-                local arr1Copy = { table.unpack(arr1) }
-                ---@cast arr2 table
-                local arr2Copy = { table.unpack(arr2) }
-
-                local result = Array.append(arr1, arr2)
-
-                assert.same(expected, result)
-                assert.not_equal(arr1, result)
-                assert.same(arr1Copy, arr1)
-                assert.not_equal(arr2, result)
-                assert.same(arr2Copy, arr2)
-            end)
-        end
-
-        it("supports curry", function()
-            assert.same({ 1, 2 }, Array.append({ 1 })({ 2 }))
-        end)
-
-    end)
-
     describe("Array.at", function()
 
         it("returns Just(value) for valid index", function()
@@ -65,6 +28,41 @@ describe("p4lua.data.Array", function()
             assert.same(Just("v"), Array.at(1)(arr))
             assert.same(Nothing, Array.at(2)(arr))
         end)
+    end)
+
+    describe("Array.concat", function()
+
+        local cases = {
+            { "append two non-empty arrays", { 1, 2, 3 }, { 4, 5 }, { 1, 2, 3, 4, 5 } },
+            { "append empty to non-empty", {}, { 1, 2, 3 }, { 1, 2, 3 } },
+            { "append non-empty to empty", { 1, 2, 3 }, {}, { 1, 2, 3 } },
+            { "append empty to empty", {}, {}, {} },
+            { "mixed types", { 1, "a" }, { true, {} }, { 1, "a", true, {} } },
+            { "nil in first array", { 1, nil, 3 }, { 4, 5 }, { 1, 4, 5 } },
+            { "nil in second array middle", { 1, 2 }, { nil, 4, 5 }, { 1, 2 } },
+            { "nil in both arrays", { 1, nil, 3 }, { nil, 4, nil }, { 1 } },
+        }
+
+        for i, case in ipairs(cases) do
+            local desc, arr1, arr2, expected = table.unpack(case)
+
+            it("case #" .. i .. ": " .. desc, function()
+                local actual = Array.concat(arr1, arr2)
+
+                assert.same(expected, actual)
+                assert.not_equal(arr1, actual)
+                assert.not_equal(arr2, actual)
+            end)
+
+            it("case #" .. i .. ": supports curry", function()
+                local curriedActual = Array.concat(arr1)(arr2)
+
+                assert.same(expected, curriedActual)
+                assert.not_equal(arr1, curriedActual)
+                assert.not_equal(arr2, curriedActual)
+            end)
+        end
+
     end)
 
     describe("Array.cons", function()
