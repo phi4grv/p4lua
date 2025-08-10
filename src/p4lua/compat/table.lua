@@ -38,4 +38,8 @@ if table.unpack == nil then
     table.unpack = pub.unpack
 end
 
+if unpack == nil then
+    unpack = table.unpack
+end
+
 return pub
