@@ -46,6 +46,47 @@ describe("p4lua.data.Array.Mutable", function()
 
     end)
 
+    describe("Array.Mutable.prependInto", function()
+
+        local cases = {
+            { "prepend two non-empty arrays", { 1, 2, 3 }, { 4, 5 }, { 1, 2, 3, 4, 5 } },
+            { "prepend empty to non-empty", {}, { 1, 2, 3 }, { 1, 2, 3 } },
+            { "prepend non-empty to empty", { 1, 2, 3 }, {}, { 1, 2, 3 } },
+            { "prepend empty to empty", {}, {}, {} },
+            { "mixed types", { 1, "a" }, { true, {} }, { 1, "a", true, {} } },
+            { "nil in first array", { 1, nil, 3 }, { 4, 5 }, { 1, 4, 5 } },
+            { "nil in second array middle", { 1, 2 }, { nil, 4, 5, 6 }, { 1, 2, nil, 6 } },
+            { "nil in both arrays", { 1, nil, 3 }, { nil, 4, nil, 6 }, { 1, nil, nil, 6 } },
+        }
+
+        for i, case in ipairs((cases)) do
+            local desc, arr1Org, arr2Org, expectedOrg = table.unpack(case)
+
+            it("case #" .. i .. ": " .. desc, function()
+                local arr1 = Map.deepCopy(arr1Org)
+                local arr2 = Map.deepCopy(arr2Org)
+                local expected = Map.deepCopy(expectedOrg)
+
+                local actual = MutableArray.prependInto(arr1, arr2)
+
+                assert.same(expected, actual)
+                assert.equal(arr2, actual)
+            end)
+
+            it("case #" .. i .. " supports curry", function()
+                local arr1 = Map.deepCopy(arr1Org)
+                local arr2 = Map.deepCopy(arr2Org)
+                local expected = Map.deepCopy(expectedOrg)
+
+                local actual = MutableArray.prependInto(arr1)(arr2)
+
+                assert.same(expected, actual)
+                assert.equal(arr2, actual)
+            end)
+        end
+
+    end)
+
     describe("Array.Mutable.cons", function()
 
         it("works on empty array", function()
