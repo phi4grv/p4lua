@@ -45,4 +45,53 @@ describe("p4lua.compat.table", function()
         end)
     end)
 
+    describe("table.unpack compatibility", function()
+
+        it("works with empty array", function()
+            assert.is_nil(p4tbl.unpack({}))
+            assert.is_nil(table.unpack({}))
+        end)
+
+        it("works with simple array", function()
+            local a1, a2, a3 = p4tbl.unpack({ 1, 2, 3 })
+            assert.same({ 1, 2, 3 }, { a1, a2, a3 })
+
+            local b1, b2, b3 = table.unpack({ 1, 2, 3 })
+            assert.same({ 1, 2, 3 }, { b1, b2, b3 })
+        end)
+
+        it("works with staring nil", function()
+            local a1, a2, a3 = p4tbl.unpack({ nil, 2, 3 }, 1, 3)
+            assert.same({ nil, 2, 3 }, { a1, a2, a3 })
+
+            local b1, b2, b3 = table.unpack({ nil, 2, 3 }, 1, 3)
+            assert.same({ nil, 2, 3 }, { b1, b2, b3 })
+        end)
+
+        it("works with middle nil", function()
+            local a1, a2, a3 = p4tbl.unpack({ 1, nil, 3 }, 1, 3)
+            assert.same({ 1, nil, 3 }, { a1, a2, a3 })
+
+            local b1, b2, b3 = table.unpack({ 1, nil, 3 }, 1, 3)
+            assert.same({ 1, nil, 3 }, { b1, b2, b3 })
+        end)
+
+        it("works with trailing nil", function()
+            local a1, a2, a3 = p4tbl.unpack({ 1, 2, nil }, 1, 3)
+            assert.same({ 1, 2, nil }, { a1, a2, a3 })
+
+            local b1, b2, b3 = table.unpack({ 1, 2, nil }, 1, 3)
+            assert.same({ 1, 2, nil }, { b1, b2, b3 })
+        end)
+
+        it("works with only nil", function()
+            local a1, a2, a3 = p4tbl.unpack({ nil, nil, nil }, 1, 3)
+            assert.same({ nil, nil, nil }, { a1, a2, a3 })
+
+            local b1, b2, b3 = table.unpack({ nil, nil, nil }, 1, 3)
+            assert.same({ nil, nil, nil }, { b1, b2, b3 })
+        end)
+
+    end)
+
 end)

@@ -28,13 +28,14 @@ if table.pack == nil then
     table.pack = pub.pack
 end
 
----@diagnostic disable: deprecated
-if (table.unpack == nil) and unpack then
-    ---@diagnostic disable-next-line: deprecated
-    table.unpack = unpack
+pub.unpack = function(t, i, j)
+    i = i or 1
+    j = j or #t -- not work with holes
+    return unpack(t, i, j)
 end
----@diagnostic enable: deprecated
 
-pub.unpack = table.unpack
+if table.unpack == nil then
+    table.unpack = pub.unpack
+end
 
 return pub
