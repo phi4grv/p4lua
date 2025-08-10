@@ -32,6 +32,33 @@ end
 
 pub.cons = p4fn.curry(2, cons)
 
+local function equalsWith(eq, arr1, arr2)
+    local i = 1
+
+    while true do
+        local v1 = arr1[i]
+        local v2 = arr2[i]
+
+        if v1 == nil then
+            if v2 == nil then
+                return true
+            end
+            return false
+        end
+        if (v2 == nil) then
+            return false
+        end
+
+        if not eq(v1, v2) then
+            return false
+        end
+
+        i = i + 1
+    end
+end
+
+pub.equalsWith = p4fn.curry(3, equalsWith)
+
 local function fmap(f, arr)
     if (arr == nil) then
         return function(arr2)

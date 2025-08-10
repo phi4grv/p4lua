@@ -91,6 +91,36 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.equalsWith", function()
+        local simpleEq = function(a, b) return a == b end
+
+        local cases = {
+            { "identical arrays", simpleEq, { 1, 2, 3 }, { 1, 2, 3 }, true },
+            { "different arrays", simpleEq, { 1, 2, 3 }, { 1, 2, 4 }, false },
+            { "one shorter", simpleEq, { 1, 2 }, { 1, 2, 3 }, false },
+            { "both empty", simpleEq, {}, {}, true },
+            { "same middle nil", simpleEq, { 1, nil, 3 }, { 1, nil, 4 }, true },
+            { "nil at same end", simpleEq, { 1, 2, nil }, { 1, 2, nil }, true },
+            { "nil mismatch", simpleEq, { 1, nil }, { 1, 2 }, false },
+            { "different nil positions", simpleEq, { nil, 1 }, { 1, nil }, false },
+            { "both start nil", simpleEq, { nil, 2, 3 }, { nil, 2, 3 }, true },
+            { "only nils", simpleEq, { nil, nil }, { nil, nil }, true },
+        }
+
+        for i, case in ipairs(cases) do
+            local desc, eqf, arr1, arr2, expected = table.unpack(case)
+            it("case #" .. i .. ": " .. desc, function()
+                assert.equals(expected, Array.equalsWith(eqf, arr1, arr2))
+            end)
+
+            it("case #" .. i .. ": " .. desc .. " support curry", function()
+                assert.equals(expected, Array.equalsWith(eqf)(arr1)(arr2))
+                assert.equals(expected, Array.equalsWith(eqf)(arr1, arr2))
+                assert.equals(expected, Array.equalsWith(eqf, arr1)(arr2))
+            end)
+        end
+    end)
+
     describe("Array.fmap", function()
 
         local double = function(x) return x * 2 end
