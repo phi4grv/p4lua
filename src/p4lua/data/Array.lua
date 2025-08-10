@@ -106,6 +106,21 @@ pub.fromTable = function(arr)
     return result
 end
 
+pub.fromVargs = function(...)
+    local result = {}
+    local i = 1
+
+    while true do
+        local v = select(i, ...)
+        if v == nil then
+            break
+        end
+        result[i] = v
+        i = i + 1
+    end
+    return result
+end
+
 pub.insert = p4fn.curry(3, insert)
 
 pub.isEmpty = function(arr)

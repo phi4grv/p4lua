@@ -144,6 +144,24 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.fromVargs", function()
+        local cases = {
+            { {}, {} },
+            { { 1, 2, 3 }, { 1, 2, 3 } },
+            { { 1, 2, nil, 3 }, { 1, 2 } },
+            { { nil, 2, 3 }, {} },
+            { { 1, "a", true, {}, nil, "after nil" }, { 1, "a", true, {} } },
+        }
+
+        for i, case in ipairs(cases) do
+            it("case #" .. i, function()
+                local input, expected = table.unpack(case)
+                local actual = Array.fromVargs(table.unpack(input))
+                assert.same(expected, actual)
+            end)
+        end
+    end)
+
     describe("foldl", function()
         local ff = function(acc, v) return acc - v end
 
