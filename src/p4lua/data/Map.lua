@@ -38,6 +38,28 @@ pub.empty = function()
     return {}
 end
 
+local function equalsWith(eq, m1, m2)
+    if m1 == m2 then
+        return true
+    end
+    if type(m1) ~= "table" or type(m2) ~= "table" then
+        return false
+    end
+
+    local count = 0
+    for k, v1 in pairs(m1) do
+        local v2 = m2[k]
+        if not eq(v1, v2) then
+            return false
+        end
+        count = count + 1
+    end
+
+    return count == pub.size(m2)
+end
+
+pub.equalsWith = p4fn.curry(3, equalsWith)
+
 local function fold(f, acc, map)
     for k, v in pairs(map) do
         acc = f(acc, k, v)

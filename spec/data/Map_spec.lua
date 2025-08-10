@@ -99,6 +99,42 @@ describe("p4lua.data.Map", function()
 
     end)
 
+    describe("Map.equalsWith", function()
+
+        local simpleEq = function(a, b) return a == b end
+        local ignoreCaseEq = function(a, b)
+            if type(a) == "string" and type(b) == "string" then
+                return a:lower() == b:lower()
+            end
+            return a == b
+        end
+
+        local cases = {
+            { "equal simple maps", simpleEq, { a = 1, b = 2 }, { a = 1, b = 2 }, true },
+            { "different keys", simpleEq, { a = 1 }, { b = 1 }, false },
+            { "different values", simpleEq, { a = 1 }, { a = 2 }, false },
+            { "ignore case values", ignoreCaseEq, { a = "Hello" }, { a = "hello" }, true },
+            { "empty maps", simpleEq, {}, {}, true },
+            { "nil value equal", simpleEq, { a = nil }, { a = nil }, true },
+            { "nil vs missing key", simpleEq, { a = nil }, {}, true },
+            { "nil vs non-nil", simpleEq, { a = nil }, { a = 1 }, false },
+        }
+        for i, case in ipairs(cases) do
+            local desc, eqf, m1, m2, expected = table.unpack(case)
+
+            it("case #" .. i .. ": " .. desc, function()
+                assert.equal(expected, Map.equalsWith(eqf, m1, m2))
+            end)
+
+            it("case #" .. i .. ": curry support", function()
+                assert.equal(expected, Map.equalsWith(eqf)(m1)(m2))
+                assert.equal(expected, Map.equalsWith(eqf)(m1, m2))
+                assert.equal(expected, Map.equalsWith(eqf, m1)(m2))
+            end)
+        end
+
+    end)
+
     describe("Map.fold", function()
 
         it("sums all values in the map", function()
