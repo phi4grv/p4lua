@@ -59,6 +59,8 @@ end
 
 pub.equalsWith = p4fn.curry(3, equalsWith)
 
+pub.equals = pub.equalsWith(function(a, b) return a == b end)
+
 local function fmap(f, arr)
     if (arr == nil) then
         return function(arr2)

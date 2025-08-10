@@ -91,6 +91,21 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.equals", function()
+
+        it("compare using ==", function()
+            assert.is_true(Array.equals({ 1 }, { 1 }))
+            assert.is_false(Array.equals({ {} }, { {} }))
+        end)
+
+        it("supports curry", function()
+            local eq12 = Array.equals({ 1, 2 })
+            assert.is_true(eq12({ 1, 2 }))
+            assert.is_false(eq12({ 1, 3 }))
+        end)
+
+    end)
+
     describe("Array.equalsWith", function()
         local simpleEq = function(a, b) return a == b end
 
