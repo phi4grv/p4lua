@@ -1,0 +1,21 @@
+{
+    "runtime": {
+        "version": "LuaJIT",
+        "path": [
+            "src/?.lua",
+            "src/?/init.lua",
+            "lua_modules/share/lua/5.1/?.lua",
+            "lua_modules/share/lua/5.1/?/init.lua"
+        ],
+    },
+    "diagnostics": {
+        "globals": ["describe", "it", "before_each"]
+    },
+    "workspace": {
+        "checkThirdParty": false,
+        "library": [
+            "src",
+            "lua_modules/share/lua/5.1"
+        ]
+    }
+}
