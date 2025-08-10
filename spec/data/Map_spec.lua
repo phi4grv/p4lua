@@ -41,6 +41,64 @@ describe("p4lua.data.Map", function()
         end)
     end)
 
+    describe("Map.deepCopy", function()
+
+        local nested1 = { x = 10, y = { z = 20 } }
+        local nested2 = { a = 1, b = { c = 2, d = { e = 3 } } }
+
+        local cases = {
+            { "empty map", {}, {} },
+            { "flat map", { a = 1, b = 2, c = 3 }, { a = 1, b = 2, c = 3 } },
+            { "nested map", nested1, { x = 10, y = { z = 20 } } },
+            { "deep nested map", nested2, { a = 1, b = { c = 2, d = { e = 3 } } } },
+            { "array with nil", { 1, 2, nil, 4 }, { 1, 2, nil, 4 } },
+        }
+
+        for _, case in ipairs(cases) do
+            local desc, input, expected = table.unpack(case)
+
+            it(desc, function()
+                local copy = Map.deepCopy(input)
+
+                assert.not_equal(input, copy)
+                assert.same(expected, copy)
+
+                local function check_nested_different(t1, t2)
+                    for k, v in pairs(t1) do
+                        if type(v) == "table" then
+                            assert.not_equal(v, t2[k])
+                            check_nested_different(v, t2[k])
+                        end
+                    end
+                end
+
+                check_nested_different(input, copy)
+            end)
+        end
+
+        describe("Map.deepCopy - non-table inputs", function()
+
+            local cases = {
+                { "number", 42 },
+                { "string", "hello" },
+                { "boolean true", true },
+                { "boolean false", false },
+                { "nil", nil },
+                { "function", function() return 1 end },
+            }
+
+            for _, case in ipairs(cases) do
+                local desc, input = table.unpack(case)
+
+                it(desc, function()
+                    local copy = Map.deepCopy(input)
+                    assert.equal(input, copy)
+                end)
+            end
+        end)
+
+    end)
+
     describe("Map.fold", function()
 
         it("sums all values in the map", function()

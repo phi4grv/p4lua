@@ -16,6 +16,24 @@ end
 
 pub.delete = p4fn.curry(2, delete)
 
+pub.deepCopy = function(m)
+    if type(m) ~= "table" then
+        return m
+    end
+
+    local copy = {}
+
+    for k, v in pairs(m) do
+        if type(v) == "table" then
+            copy[k] = pub.deepCopy(v)
+        else
+            copy[k] = v
+        end
+    end
+
+    return copy
+end
+
 pub.empty = function()
     return {}
 end
