@@ -284,6 +284,43 @@ describe("p4lua.data.Map", function()
         end)
     end)
 
+    describe("Map.keys", function()
+
+        local cases = {
+            { "empty map", {}, {} },
+            { "flat map", { a = 1, b = 2, c = 3 }, { "a", "b", "c" } },
+            { "nested map", { a = { x = 10 }, b = 2 }, { "a", "b" } },
+            { "numeric keys", { [1] = "one", [2] = "two" }, { 1, 2 } },
+            { "mixed keys", { ["one"] = 1, [2] = "two" }, { "one", 2 } },
+            { "keys with nil values", { a = nil, b = 2 }, { "b" } },
+            { "array keys", { "one", "two" }, { 1, 2 } },
+            { "array starting nil", { nil, "two", "three" }, { 2, 3 } },
+            { "array with middle nil", { "one", nil, "three" }, { 1, 3 } },
+            { "array trailing nil", { nil, "two", nil }, { 2 } },
+            { "array with nils only", { nil, nil, nil }, {} },
+        }
+
+        for i, case in ipairs(cases) do
+            local desc, input, expected = table.unpack(case)
+
+            it(desc, function()
+                local keys = Map.keys(input)
+                -- Sort keys for consistent order before assert.same
+                table.sort(keys, function(a, b)
+                    if type(a) == type(b) then return a < b
+                    else return tostring(a) < tostring(b) end
+                end)
+                ---@cast expected table
+                table.sort(expected, function(a, b)
+                    if type(a) == type(b) then return a < b
+                    else return tostring(a) < tostring(b) end
+                end)
+                assert.same(expected, keys)
+            end)
+        end
+
+    end)
+
     describe("Map.lookup", function()
 
         it("returns Maybe.Just(value) if key exists", function()

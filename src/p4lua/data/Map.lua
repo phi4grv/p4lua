@@ -102,6 +102,16 @@ local function lookup(k, m)
     end
 end
 
+pub.keys = function(m)
+    local result = {}
+
+    for k, _ in pairs(m) do
+        table.insert(result, k)
+    end
+
+    return result
+end
+
 pub.lookup = p4fn.curry(2, lookup)
 
 pub.shallowCopy = function(m)
