@@ -1,4 +1,5 @@
-require("p4lua.compat.table")
+local p4lua = require("p4lua")
+local Array = p4lua.requireLazy("p4lua.data.Array")
 
 local pub = {}
 
@@ -34,7 +35,7 @@ pub.curry = function(arityOrHandlers, f)
 
         return function(...)
             local args = { ... }
-            local nargs = require("p4lua.data.Array").zipWith(argHandlers, cargs)
+            local nargs = Array.zipWith(argHandlers, cargs)
             table.move(args, 1, #args, #nargs + 1, nargs)
             return curried(table.unpack(nargs))
         end

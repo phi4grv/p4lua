@@ -1,5 +1,7 @@
+local p4lua = require("p4lua")
 local p4fn = require("p4lua.fn")
-local Maybe = require("p4lua.data.Maybe")
+local Array = p4lua.requireLazy("p4lua.data.Array")
+local Maybe = p4lua.requireLazy("p4lua.data.Maybe")
 
 local pub = {}
 
@@ -147,7 +149,7 @@ end
 
 -- valuesByKeys :: Map k v -> [k] -> [Maybe v]
 local function valuesByKeys(ks, m)
-    return require("p4lua.data.Array").fmap(function(k)
+    return Array.fmap(function(k)
         return pub.lookup(k, m)
     end, ks)
 end

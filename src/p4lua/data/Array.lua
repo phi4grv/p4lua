@@ -1,12 +1,15 @@
+local p4lua = require("p4lua")
 local p4fn = require("p4lua.fn")
+local Map = p4lua.requireLazy("p4lua.data.Map")
+local Maybe = p4lua.requireLazy("p4lua.data.Maybe")
 
 local pub = {}
 
 local function at(i, arr)
     if i >= 1 and i <= #arr then
-        return require("p4lua.data.Maybe").Just(arr[i])
+        return Maybe.Just(arr[i])
     else
-        return require("p4lua.data.Maybe").Nothing
+        return Maybe.Nothing
     end
 end
 

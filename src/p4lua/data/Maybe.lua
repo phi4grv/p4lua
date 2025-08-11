@@ -1,6 +1,7 @@
+local p4lua = require("p4lua")
 local adt = require("p4lua.adt")
 local p4fn = require("p4lua.fn")
-local Array = require("p4lua.data.Array")
+local Array = p4lua.requireLazy("p4lua.data.Array")
 
 local pub = {}
 
