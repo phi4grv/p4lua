@@ -32,8 +32,10 @@ pub.concat = p4fn.curry(2, concat)
 
 local function cons(v, arr)
     local result = { v }
-    for i = 1, #arr do
+    local i = 1
+    while(arr[i] ~= nil) do
         result[i + 1] = arr[i]
+        i = i + 1
     end
     return result
 end
