@@ -22,6 +22,12 @@ describe("p4lua.data.Array", function()
             assert.same(Nothing, Array.at(-1, arr))
         end)
 
+        it("returns Nothing beyond the first nil", function()
+            local arr = {"a", nil, "c"}
+            assert.same(Nothing, Array.at(2, arr))
+            assert.same(Nothing, Array.at(3, arr))
+        end)
+
         it("supports curry", function()
             local arr = { "v" }
             assert.same(Just("v"), Array.at(1)(arr))

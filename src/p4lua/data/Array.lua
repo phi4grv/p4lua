@@ -6,11 +6,16 @@ local Maybe = p4lua.requireLazy("p4lua.data.Maybe")
 local pub = {}
 
 local function at(i, arr)
-    if i >= 1 and i <= #arr then
-        return Maybe.Just(arr[i])
-    else
-        return Maybe.Nothing
+    local idx = 1
+
+    while(arr[idx] ~= nil) do
+        if (idx == i) then
+            return Maybe.Just(arr[i])
+        end
+        idx = idx + 1
     end
+
+    return Maybe.Nothing
 end
 
 pub.at = p4fn.curry(2, at)
