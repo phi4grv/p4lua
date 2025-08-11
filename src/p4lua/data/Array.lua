@@ -194,10 +194,12 @@ end
 
 local function snoc(v, arr)
     local result = {}
-    for i = 1, #arr do
+    local i = 1
+    while(arr[i] ~= nil) do
         result[i] = arr[i]
+        i = i + 1
     end
-    result[#arr + 1] = v
+    result[i] = v
     return result
 end
 

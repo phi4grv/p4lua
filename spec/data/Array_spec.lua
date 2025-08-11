@@ -463,20 +463,23 @@ describe("p4lua.data.Array", function()
 
     describe("Array.snoc", function()
 
-        it("works on empty array", function()
-            local arr = {}
-            local actual = Array.snoc(1, arr)
-            assert.same({ 1 }, actual)
-            assert.same({}, arr)
-        end)
+        local cases = {
+            { "empty array", 1, {}, { 1 } },
+            { "nomal array", 4, { 1, 2, 3 }, { 1, 2, 3, 4 } },
+            { "array starting nil", 1, { nil, 3, 4 }, { 1 } },
+            { "array with middle nil", 2, { 1, nil, 3 }, { 1, 2 } },
+            { "array trailing nil", 3, { 1, 2, nil }, { 1, 2, 3 } },
+        }
 
-        it("returns a new array with the element appended", function()
-            local arr = {1, 2, 3}
-            local actual = Array.snoc(4, arr)
+        for i, case in ipairs(cases) do
+            local desc, value, arr, expected = table.unpack(case)
+            local arrCopy = Map.deepCopy(arr)
 
-            assert.same({1, 2, 3, 4}, actual)
-            assert.same({1, 2, 3}, arr)
-        end)
+            it("case #" .. i .. ": " .. desc, function()
+                assert.same(expected, Array.snoc(value, arr))
+                assert.same(arrCopy, arr)
+            end)
+        end
 
         it("supports curry", function()
             local arr = { 1, 2 }
