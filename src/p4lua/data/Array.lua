@@ -89,9 +89,13 @@ pub.filter = p4fn.curry(2, filter)
 
 local function fmap(f, arr)
     local result = {}
-    for i = 1, #arr do
+
+    local i = 1
+    while arr[i] ~= nil do
         result[i] = f(arr[i])
+        i = i + 1
     end
+
     return result
 end
 

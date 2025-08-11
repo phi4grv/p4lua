@@ -199,6 +199,12 @@ describe("p4lua.data.Array", function()
             assert.same({ 1, 2, 3 }, arr)
         end)
 
+        it("#focus works with array containing nil", function()
+            assert.same({}, Array.fmap(double, { nil, 2, 3 }))
+            assert.same({ 2 }, Array.fmap(double, { 1, nil, 3 }))
+            assert.same({ 2, 4 }, Array.fmap(double, { 1, 2, nil }))
+        end)
+
         it("supports currying", function()
             local arr = { 1, 2, 3 }
             assert.are.same({ 2, 4, 6 }, Array.fmap(double)(arr))
