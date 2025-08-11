@@ -154,25 +154,25 @@ pub.fromVargs = function(...)
 end
 
 local function insert(i, v, arr)
-    local n = #arr
-    local pos
-    if i < 1 then
-        pos = 1
-    elseif i > n + 1 then
-        pos = n + 1
-    else
-        pos = i
+    if (i < 1) then
+        i = 1
     end
 
     local result = {}
-    for j = 1, pos - 1 do
-        result[j] = arr[j]
+    local idx = 1
+    while(arr[idx] ~= nil and idx < i) do
+        result[idx] = arr[idx]
+        idx = idx + 1
     end
 
-    result[pos] = v
+    result[idx] = v
+    if (i < idx) then
+        return result
+    end
 
-    for j = pos, n do
-        result[j + 1] = arr[j]
+    while(arr[idx] ~= nil) do
+        result[idx+1] = arr[idx]
+        idx = idx + 1
     end
 
     return result

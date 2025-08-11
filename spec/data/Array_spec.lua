@@ -199,7 +199,7 @@ describe("p4lua.data.Array", function()
             assert.same({ 1, 2, 3 }, arr)
         end)
 
-        it("#focus works with array containing nil", function()
+        it("works with array containing nil", function()
             assert.same({}, Array.fmap(double, { nil, 2, 3 }))
             assert.same({ 2 }, Array.fmap(double, { 1, nil, 3 }))
             assert.same({ 2, 4 }, Array.fmap(double, { 1, 2, nil }))
@@ -343,57 +343,56 @@ describe("p4lua.data.Array", function()
 
     describe("Array.insert", function()
 
-        it("inserts into an empty array at index 1", function()
+        it("inserts into an empty array", function()
             local arr = {}
-            local actual = Array.insert(1, "v", arr)
-
-            assert.same({ "v" }, actual)
+            assert.same({ "v" }, Array.insert(1, "v", arr))
+            assert.same({ "v" }, Array.insert(0, "v", arr))
+            assert.same({ "v" }, Array.insert(2, "v", arr))
             assert.same({}, arr)
+
+            arr = { nil, 1 }
+            assert.same({ "v" }, Array.insert(1, "v", arr))
+            assert.same({ "v" }, Array.insert(0, "v", arr))
+            assert.same({ "v" }, Array.insert(2, "v", arr))
+            assert.same({ nil, 1 }, arr)
         end)
 
-        it("inserts at the beginning when index < 1", function()
+        it("inserts at the beginning", function()
             local arr = { "b", "c" }
-            local actual = Array.insert(0, "a", arr)
-
-            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "a", "b", "c" }, Array.insert(0, "a", arr))
+            assert.same({ "a", "b", "c" }, Array.insert(1, "a", arr))
             assert.same({ "b", "c" }, arr)
-        end)
 
-        it("inserts at the beginning when index == 1", function()
-            local arr = { "b", "c" }
-            local actual = Array.insert(1, "a", arr)
-
-            assert.same({ "a", "b", "c" }, actual)
-            assert.same({ "b", "c" }, arr)
+            arr = { "b", nil, "c" }
+            assert.same({ "a", "b" }, Array.insert(0, "a", arr))
+            assert.same({ "a", "b" }, Array.insert(1, "a", arr))
+            assert.same({ "b", nil, "c" }, arr)
         end)
 
         it("inserts in the middle", function()
             local arr = { "a", "c" }
-            local actual = Array.insert(2, "b", arr)
-
-            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "a", "b", "c" }, Array.insert(2, "b", arr))
             assert.same({ "a", "c" }, arr)
+
+            arr = { "a", "c", nil, "d" }
+            assert.same({ "a", "b", "c" }, Array.insert(2, "b", arr))
+            assert.same({ "a", "c", nil, "d" }, arr)
         end)
 
-        it("inserts at the end when index == length + 1", function()
+        it("inserts at the end when", function()
             local arr = { "a", "b" }
-            local actual = Array.insert(3, "c", arr)
-
-            assert.same({ "a", "b", "c" }, actual)
+            assert.same({ "a", "b", "c" }, Array.insert(3, "c", arr))
+            assert.same({ "a", "b", "c" }, Array.insert(4, "c", arr))
             assert.same({ "a", "b" }, arr)
-        end)
 
-        it("inserts at the end when index > length + 1", function()
-            local arr = { "a", "b" }
-            local actual = Array.insert(5, "c", arr)
-
-            assert.same({ "a", "b", "c" }, actual)
-            assert.same({ "a", "b" }, arr)
+            arr = { "a", nil, "b" }
+            assert.same({ "a", "c" }, Array.insert(2, "c", arr))
+            assert.same({ "a", "c" }, Array.insert(3, "c", arr))
+            assert.same({ "a", nil, "b" }, arr)
         end)
 
         it("supports curry", function()
             local arr = { "a", "c" }
-
             assert.same({ "a", "b", "c" }, Array.insert(2)("b")(arr))
             assert.same({ "a", "b", "c" }, Array.insert(2)("b", arr))
             assert.same({ "a", "b", "c" }, Array.insert(2, "b")(arr))
