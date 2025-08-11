@@ -90,13 +90,6 @@ end
 
 pub.fmap = p4fn.curry(2, fmap)
 
-local function foldAccHandler(acc)
-    if type(acc) == "table" then
-        return require("p4lua.data.Map").deepCopy(acc)
-    end
-    return acc
-end
-
 local function foldl(ff, acc, arr)
     local i = 1
     while arr[i] ~= nil do
@@ -106,7 +99,7 @@ local function foldl(ff, acc, arr)
     return acc
 end
 
-pub.foldl = p4fn.curry({ p4fn.id, foldAccHandler }, foldl)
+pub.foldl = p4fn.curry({ p4fn.id, Map.deepCopyOrId }, foldl)
 
 local function foldr(ff, acc, arr)
     local len = pub.length(arr)
@@ -117,7 +110,7 @@ local function foldr(ff, acc, arr)
     return acc
 end
 
-pub.foldr = p4fn.curry({ p4fn.id, foldAccHandler }, foldr)
+pub.foldr = p4fn.curry({ p4fn.id, Map.deepCopyOrId }, foldr)
 
 pub.fromTable = function(arr)
     return select(1, pub.fromTableWithLength(arr))
