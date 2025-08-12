@@ -235,6 +235,35 @@ describe("p4lua.data.Map", function()
 
     end)
 
+    describe("Map.fromKeysAndValues", function()
+
+        local cases = {
+            { "011", { {}, {} }, {}, "both are emtpy" },
+            { "012", { {}, { 1 } }, {}, "keys are emtpy" },
+            { "013", { { "k1" }, {} }, {}, "values are emtpy" },
+            { "021", { { nil, "k2" }, { nil, 2 } }, {}, "both are emtpy with nil" },
+            { "022", { { nil, "k2" }, { 1 } }, {}, "keys are emtpy with nil" },
+            { "023", { { "k1" }, { nil, 1} }, {}, "values are emtpy with nil" },
+            { "031", { { "k1" }, { 1 } }, { k1 = 1 }, "keys and values are same length" },
+            { "032", { { "k1", "k2" }, { 1, 2 } }, { k1 = 1, k2 = 2 }, "keys and values are same length" },
+            { "041", { { "k1" }, { 1, 2 } }, { k1 = 1 }, "keys and values are different length" },
+            { "042", { { "k1", "k2" }, { 1 } }, { k1 = 1 }, "keys and values are different length" },
+        }
+
+        for _, c in ipairs(cases) do
+            local case = { id = c[1], data = c[2], expected = c[3], desc = c[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                assert.same(case.expected, Map.fromKeysAndValues(case.data[1], case.data[2]))
+            end)
+
+            it(("case #%s: %s: supports curry"):format(case.id, case.desc), function()
+                assert.same(case.expected, Map.fromKeysAndValues(case.data[1])(case.data[2]))
+            end)
+        end
+
+    end)
+
     describe("Map.insert", function()
 
         it("inserts a new key-value pair into an empty map", function()

@@ -102,6 +102,20 @@ end
 
 pub.filterByKeys = p4fn.curry(2, filterByKeys)
 
+local function fromKeysAndValues(ks, vs)
+    local result = {}
+    local i = 1
+
+    while(ks[i] ~= nil and vs[i] ~= nil) do
+        result[ks[i]] = vs[i]
+        i = i + 1
+    end
+
+    return result
+end
+
+pub.fromKeysAndValues = p4fn.curry(2, fromKeysAndValues)
+
 local function insert(k, v, m)
     local newMap = {}
 
