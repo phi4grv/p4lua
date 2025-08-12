@@ -217,6 +217,18 @@ end
 
 pub.snoc = p4fn.curry(2, snoc)
 
+pub.vpairs = function(arr)
+    local i = 0
+
+    return function(_)
+        i = i + 1
+        if arr[i] == nil then
+            return nil
+        end
+        return arr[i], i
+    end
+end
+
 pub.zipWith = function(fs, ...)
     local args = { ... }
     local result = {}

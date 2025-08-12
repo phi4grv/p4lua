@@ -491,6 +491,33 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("p4lua.data.Array.vpairs", function()
+
+        local cases = {
+            { "01", {} , {}, "empty array" },
+            { "02", { nil } , {}, "empty array by nil" },
+            { "03", { nil, "a" } , {}, "empty array by nil" },
+            { "11", { "a", "b" }, { { v = "a", i = 1 }, { v = "b", i = 2 } }, "general behavior" },
+            { "12", { "a", nil, "c" }, { { v = "a", i = 1 } }, "array with middle nil" },
+            { "11", { "a", "b", nil }, { { v = "a", i = 1 }, { v = "b", i = 2 } }, "array with trailing nil" },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], data = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = {}
+
+                for v, i in Array.vpairs(case.data) do
+                    table.insert(actual, { v = v, i = i })
+                end
+
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
+
     describe("p4lua.data.Array.zipWith", function()
 
         describe("p4lua.data.Array.zipWith with single parameter functions", function()
