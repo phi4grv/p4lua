@@ -61,10 +61,26 @@ end
 
 pub.chain = pub.curry(2, chain)
 
-pub.compose = function(...)
-    local fs = {...}
+local function composeArray(fs)
+    local len = Array.length(fs)
 
-    return pub.composeArray(fs)
+    if len == 0 then
+        return pub.id
+    end
+
+    return function(...)
+        local result = table.pack(...)
+        for i = len, 1, -1 do
+            result = table.pack(fs[i](table.unpack(result, 1, result.n)))
+        end
+        return table.unpack(result, 1, result.n)
+    end
+end
+
+pub.compose = function(...)
+    local fs = { ... }
+
+    return composeArray(fs)
 end
 
 pub.composeArray = function(fs)
@@ -72,17 +88,7 @@ pub.composeArray = function(fs)
         error(("bad argument #1 to 'composeArray' (table expected, got %s)"):format(type(fs)))
     end
 
-    if #fs == 0 then
-        return pub.id
-    end
-
-    return function(...)
-        local fio = ...
-        for i = #fs, 1, -1 do
-            fio = fs[i](fio)
-        end
-        return fio
-    end
+    return composeArray(fs)
 end
 
 pub.const = function(x)

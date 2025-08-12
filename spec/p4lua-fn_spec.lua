@@ -47,9 +47,24 @@ describe("p4lua.fn", function()
 
             end)
         end
+
+        it("passes multiple return values through the composition chain", function()
+            local f1 = function(a, b, c)
+                return a + 1, b + 1, c + 1
+            end
+            local f2 = function(a, b, c)
+                return {a, b, c}
+            end
+
+            local composed = p4fn.compose(f2, f1)
+            local result = composed(1, 2, 3)
+
+            assert.same({2, 3, 4}, result)
+        end)
+
     end)
 
-    describe("pub.composeArray", function()
+    describe("p4lua.fn.composeArray", function()
 
         it("throws error if input is not a table", function()
             assert.has_error(function()
