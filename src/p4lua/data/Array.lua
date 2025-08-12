@@ -21,9 +21,21 @@ end
 pub.at = p4fn.curry(2, at)
 
 local function concat(arr1, arr2)
-    local result, len = pub.fromTableWithLength(arr1)
+    local result = {}
+    local i = 1
 
-    table.move(arr2, 1, pub.length(arr2), len + 1, result)
+    while arr1[i] ~= nil do
+        result[i] = arr1[i]
+        i = i + 1
+    end
+    i = i - 1
+
+    local j = 1
+
+    while arr2[j] ~= nil do
+        result[i + j] = arr2[j]
+        j = j + 1
+    end
 
     return result
 end
