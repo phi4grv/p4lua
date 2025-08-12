@@ -7,11 +7,13 @@ local pub = {}
 
 local function delete(k, m)
     local result = {}
+
     for key, value in pairs(m) do
         if key ~= k then
             result[key] = value
         end
     end
+
     return result
 end
 
@@ -35,6 +37,7 @@ pub.deepCopy = function(m)
     if type(m) ~= "table" then
         return m
     end
+
     return deepCopy(m)
 end
 
@@ -42,6 +45,7 @@ pub.deepCopyOrId = function(arg)
     if type(arg) == "table" then
         return deepCopy(arg)
     end
+
     return arg
 end
 
@@ -58,6 +62,7 @@ local function equalsWith(eq, m1, m2)
     end
 
     local count = 0
+
     for k, v1 in pairs(m1) do
         local v2 = m2[k]
         if not eq(v1, v2) then
@@ -77,6 +82,7 @@ local function fold(f, acc, map)
     for k, v in pairs(map) do
         acc = f(acc, k, v)
     end
+
     return acc
 end
 
@@ -84,11 +90,13 @@ pub.fold = p4fn.curry(3, fold)
 
 local function filterByKeys(ks, m)
     local result = {}
+
     for _, k in ipairs(ks) do
         if m[k] then
             result[k] = m[k]
         end
     end
+
     return result
 end
 
@@ -96,6 +104,7 @@ pub.filterByKeys = p4fn.curry(2, filterByKeys)
 
 local function insert(k, v, m)
     local newMap = {}
+
     for key, val in pairs(m) do
         newMap[key] = val
     end
@@ -108,6 +117,7 @@ pub.insert = p4fn.curry(3, insert)
 
 local function lookup(k, m)
     local v = m[k]
+
     if v == nil then
         return Maybe.Nothing
     else
@@ -149,11 +159,13 @@ end
 
 pub.values = function(m)
     local result = {}
+
     for _, v in pairs(m) do
         if v ~= nil then
             table.insert(result, v)
         end
     end
+
     return result
 end
 

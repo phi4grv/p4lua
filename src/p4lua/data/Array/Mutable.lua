@@ -20,6 +20,7 @@ pub.appendInto = p4fn.curry(2, appendInto)
 
 local function cons(v, arr)
     table.insert(arr, 1, v)
+
     return arr
 end
 
@@ -62,6 +63,7 @@ pub.prependInto = p4fn.curry(2, prependInto)
 
 local function snoc(v, arr)
     table.insert(arr, v)
+
     return arr
 end
 

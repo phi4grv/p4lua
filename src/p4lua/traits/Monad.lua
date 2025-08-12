@@ -22,6 +22,7 @@ end
 
 pub.makeKleisliCompose = function(bind, unit)
     local composeArray = pub.makeKleisliComposeArray(bind, unit)
+
     return function(...)
         return composeArray({...})
     end

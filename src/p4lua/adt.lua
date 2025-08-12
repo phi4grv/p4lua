@@ -10,6 +10,7 @@ local function createCtor(typeName, tag, keys)
             return value
         end
     end
+
     return function(...)
         local args = table.pack(...)
         if args.n ~= #keys then
@@ -27,14 +28,18 @@ end
 local function match(typeName, valueKeys, branches, value)
     local tag = value._tag
     local handler = branches[tag]
+
     if not handler then
         error(("Match error: unmatched tag '%s' in type '%s'"):format(tag or "<nil>", typeName))
     end
+
     local ks = valueKeys[tag]
     local args = {}
+
     for i, v in ipairs(ks) do
         args[i] = value[v]
     end
+
     return handler(table.unpack(args, 1, #ks))
 end
 

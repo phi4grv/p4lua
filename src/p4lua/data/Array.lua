@@ -33,10 +33,12 @@ pub.concat = p4fn.curry(2, concat)
 local function cons(v, arr)
     local result = { v }
     local i = 1
+
     while(arr[i] ~= nil) do
         result[i + 1] = arr[i]
         i = i + 1
     end
+
     return result
 end
 
@@ -73,8 +75,8 @@ pub.equals = pub.equalsWith(function(a, b) return a == b end)
 
 function filter(pred, arr)
     local result = {}
-
     local i = 1
+
     while(arr[i] ~= nil) do
         if pred(arr[i], i) then
             table.insert(result, arr[i])
@@ -89,8 +91,8 @@ pub.filter = p4fn.curry(2, filter)
 
 local function fmap(f, arr)
     local result = {}
-
     local i = 1
+
     while arr[i] ~= nil do
         result[i] = f(arr[i])
         i = i + 1
@@ -103,10 +105,12 @@ pub.fmap = p4fn.curry(2, fmap)
 
 local function foldl(ff, acc, arr)
     local i = 1
+
     while arr[i] ~= nil do
         acc = ff(acc, arr[i])
         i = i + 1
     end
+
     return acc
 end
 
@@ -118,6 +122,7 @@ local function foldr(ff, acc, arr)
     for i = len, 1, -1 do
         acc = ff(arr[i], acc)
     end
+
     return acc
 end
 
@@ -135,6 +140,7 @@ pub.fromTableWithLength = function(arr)
         result[i] = arr[i]
         i = i + 1
     end
+
     return result, i - 1
 end
 
@@ -150,16 +156,18 @@ pub.fromVargs = function(...)
         result[i] = v
         i = i + 1
     end
+
     return result
 end
 
 local function insert(i, v, arr)
+    local result = {}
+    local idx = 1
+
     if (i < 1) then
         i = 1
     end
 
-    local result = {}
-    local idx = 1
     while(arr[idx] ~= nil and idx < i) do
         result[idx] = arr[idx]
         idx = idx + 1
@@ -186,20 +194,24 @@ end
 
 pub.length = function(arr)
     local i = 1
+
     while arr[i] ~= nil do
         i = i + 1
     end
+
     return i - 1
 end
 
 local function snoc(v, arr)
     local result = {}
     local i = 1
+
     while(arr[i] ~= nil) do
         result[i] = arr[i]
         i = i + 1
     end
     result[i] = v
+
     return result
 end
 

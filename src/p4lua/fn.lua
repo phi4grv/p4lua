@@ -8,6 +8,7 @@ pub.id = function(x) return x end
 pub.curry = function(arityOrHandlers, f)
     local arity
     local argHandlers
+
     if type(arityOrHandlers) == "number" then
         arity = arityOrHandlers
         if (arity <= 0) then
@@ -50,9 +51,11 @@ function chain(fs, x)
     end
 
     local result = x
+
     for _, f in ipairs(fs) do
         result = f(result)
     end
+
     return result
 end
 
@@ -60,6 +63,7 @@ pub.chain = pub.curry(2, chain)
 
 pub.compose = function(...)
     local fs = {...}
+
     return pub.composeArray(fs)
 end
 
@@ -71,6 +75,7 @@ pub.composeArray = function(fs)
     if #fs == 0 then
         return pub.id
     end
+
     return function(...)
         local fio = ...
         for i = #fs, 1, -1 do
@@ -90,6 +95,7 @@ pub.flip =  function(f)
     local flipped = function(a, b, ...)
         return f(b, a, ...)
     end
+
     return pub.curry(2, flipped)
 end
 
