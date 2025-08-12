@@ -140,22 +140,6 @@ end
 
 pub.foldr = p4fn.curry({ p4fn.id, Map.deepCopyOrId }, foldr)
 
-pub.fromTable = function(arr)
-    return select(1, pub.fromTableWithLength(arr))
-end
-
-pub.fromTableWithLength = function(arr)
-    local result = {}
-    local i = 1
-
-    while arr[i] ~= nil do
-        result[i] = arr[i]
-        i = i + 1
-    end
-
-    return result, i - 1
-end
-
 pub.fromVargs = function(...)
     local result = {}
     local i = 1
@@ -212,6 +196,18 @@ pub.length = function(arr)
     end
 
     return i - 1
+end
+
+pub.shallowCopy = function(arr)
+    local result = {}
+    local i = 1
+
+    while arr[i] ~= nil do
+        result[i] = arr[i]
+        i = i + 1
+    end
+
+    return result
 end
 
 local function snoc(v, arr)

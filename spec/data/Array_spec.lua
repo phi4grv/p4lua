@@ -212,59 +212,6 @@ describe("p4lua.data.Array", function()
 
     end)
 
-    describe("Array.fromTable", function()
-
-        local cases = {
-            { { 1, 2, 3 }, { 1, 2, 3 } },
-            { { 1, 2, nil, 3 }, { 1, 2 } },
-            { { nil, 2, 3 }, {} },
-            { {}, {} },
-            { { 1, "a", true, {}, nil, "after nil" }, { 1, "a", true, {} } },
-        }
-
-        for i, case in ipairs(cases) do
-            it("case #" .. i, function()
-                local input, expected = table.unpack(case)
-                ---@cast input table
-                local inputCopy = { table.unpack(input) }
-
-                local actual = Array.fromTable(input)
-
-                assert.same(expected, actual)
-                assert.not_equal(input, actual)
-                assert.same(input, inputCopy)
-            end)
-        end
-
-    end)
-
-    describe("Array.fromTableWithLength", function()
-
-        local cases = {
-            { { 1, 2, 3 }, { 1, 2, 3 }, 3 },
-            { { 1, 2, nil, 3 }, { 1, 2 }, 2 },
-            { { nil, 2, 3 }, {}, 0 },
-            { {}, {}, 0 },
-            { { 1, "a", true, {}, nil, "after nil" }, { 1, "a", true, {} }, 4 },
-        }
-
-        for i, case in ipairs(cases) do
-            it("case #" .. i, function()
-                local input, expectedArr, expectedLen = table.unpack(case)
-                ---@cast input table
-                local inputCopy = { table.unpack(input) }
-
-                local actualArr, actualLen = Array.fromTableWithLength(input)
-
-                assert.same(expectedArr, actualArr)
-                assert.equal(expectedLen, actualLen)
-                assert.not_equal(input, actualArr)
-                assert.same(input, inputCopy)
-            end)
-        end
-
-    end)
-
     describe("Array.fromVargs", function()
 
         local cases = {
@@ -457,6 +404,36 @@ describe("p4lua.data.Array", function()
 
         it("counts up to the first nil in the sequence", function()
             assert.equal(1, Array.length({ 1, nil, 3 }))
+        end)
+
+    end)
+
+    describe("Array.shallowCopy", function()
+
+        local nested = { "nested" }
+        local cases = {
+            { "011", {}, {}, "empty array" },
+            { "012", { nil, "b" }, {}, "empty array with nil" },
+            { "021", { "a" }, { "a" }, "singleton array" },
+            { "022", { "a", nil, "c"}, { "a" }, "singleton array with nil" },
+            { "031", { 1, 2, 3 }, { 1, 2, 3 }, "array with no nils" },
+            { "041", { nested, 2 }, { nested, 2 }, "nested array reference" },
+            { "051", { 1, 2, nil }, { 1, 2 }, "array with trailing nil" },
+            { "061", { a = 1 }, {}, "map" },
+        }
+
+        local caseData = Array.fmap(Map.fromKeysAndValues({ "id", "data", "expected", "desc" }), cases)
+
+        ---@cast caseData table
+        for _, case in ipairs(caseData) do
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                assert.same(case.expected, Array.shallowCopy(case.data))
+            end)
+        end
+
+        local case = caseData[6] -- TODO: local case = casefindById(caseData, "041")
+        it(("case #%s: %s: don't copy nested"):format(case.id, case.desc), function()
+            assert.equals(nested, case.data[1])
         end)
 
     end)
