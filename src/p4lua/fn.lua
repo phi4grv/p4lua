@@ -3,7 +3,7 @@ local Array = p4lua.requireLazy("p4lua.data.Array")
 
 local pub = {}
 
-pub.id = function(x) return x end
+pub.id = function(...) return ... end
 
 pub.curry = function(arityOrHandlers, f)
     local arity
