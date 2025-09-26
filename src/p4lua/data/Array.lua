@@ -237,6 +237,30 @@ pub.vpairs = function(arr)
     end
 end
 
+pub.zip = function(...)
+    local args = { ... }
+    local result = {}
+    local idx = 1
+
+    for i = 1, #args do
+        if (type(args[i]) ~= "table") then
+            error("zip: arg#" .. i .." must be table, got " .. type(args[1]))
+        end
+    end
+
+    while true do
+        local z = {}
+        for i = 1, #args do
+            if (args[i][idx] == nil) then
+                return result
+            end
+            table.insert(z, args[i][idx])
+        end
+        table.insert(result, z)
+        idx = idx + 1
+    end
+end
+
 pub.zipWith = function(fs, ...)
     local args = { ... }
     local result = {}

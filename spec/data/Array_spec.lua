@@ -495,6 +495,32 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("p4lua.data.Array.zip", function()
+
+        local cases = {
+            { "01", { {}, {} }, {}, "all inputs are empty"  },
+            { "02", { { "a1" }, {} }, {}, "one of input is empty" },
+            { "03", { {}, { "b1" } }, {}, "one of input is empty" },
+            { "04", { { "a1" }, { nil, "b1" } }, {}, "one of input is empty with nil" },
+            { "05", { { nil, "a1" }, { "b1" } }, {}, "one of input is empty with nil" },
+            { "06", { { "a1" }, { nil, "b2" }, { "c1" } }, {}, "one of input is empty with 3 args" },
+            { "11", { { "a1" }, { "b1" } }, { { "a1", "b1" } }, "with 1 length" },
+            { "12", { { "a1", "a2" }, { "b1" } }, { { "a1", "b1" } }, "with different length" },
+            { "13", { { "a1" }, { "b1", "b2" } }, { { "a1", "b1" } }, "with different length" },
+            { "21", { { "a1" }, { "b1" }, { "c1" } }, { { "a1", "b1", "c1" } }, "with 3 args" },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Array.zip(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
+
     describe("p4lua.data.Array.zipWith", function()
 
         describe("p4lua.data.Array.zipWith with single parameter functions", function()
