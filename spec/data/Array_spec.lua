@@ -40,33 +40,25 @@ describe("p4lua.data.Array", function()
     describe("Array.concat", function()
 
         local cases = {
-            { "append two non-empty arrays", { 1, 2, 3 }, { 4, 5 }, { 1, 2, 3, 4, 5 } },
-            { "append empty to non-empty", {}, { 1, 2, 3 }, { 1, 2, 3 } },
-            { "append non-empty to empty", { 1, 2, 3 }, {}, { 1, 2, 3 } },
-            { "append empty to empty", {}, {}, {} },
-            { "mixed types", { 1, "a" }, { true, {} }, { 1, "a", true, {} } },
-            { "nil in first array", { 1, nil, 3 }, { 4, 5 }, { 1, 4, 5 } },
-            { "nil in second array middle", { 1, 2 }, { nil, 4, 5 }, { 1, 2 } },
-            { "nil in both arrays", { 1, nil, 3 }, { nil, 4, nil }, { 1 } },
+            { "01", { { 1, 2, 3 }, { 4, 5 } }, { 1, 2, 3, 4, 5 }, "append two non-empty arrays"  },
+            { "02", { {}, { 1, 2, 3 } }, { 1, 2, 3 }, "append emtpy to non-empty" },
+            { "03", { { 1, 2, 3 }, {} }, { 1, 2, 3 }, "append non-empty to empty" },
+            { "04", { {}, {} }, {}, "append empty to empty" },
+            { "05", { { 1, "a" }, { true, {} } }, { 1, "a", true, {} }, "mixed types" },
+            { "06", { { 1, nil, 3 }, { 4, 5 } }, { 1, 4, 5 }, "nil in first array" },
+            { "07", { { 1, 2 }, { nil, 4, 5 } }, { 1, 2 },  "nil in second array middle"},
+            { "08", { { 1, nil, 3 }, { nil, 4, nil } }, { 1 },  "nil in both arrays"},
+            { "10", { { 1 }, { 2 }, { 3 } }, { 1, 2, 3 },  "append 3 arrays"},
         }
 
-        for i, case in ipairs(cases) do
-            local desc, arr1, arr2, expected = table.unpack(case)
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
 
-            it("case #" .. i .. ": " .. desc, function()
-                local actual = Array.concat(arr1, arr2)
-
-                assert.same(expected, actual)
-                assert.not_equal(arr1, actual)
-                assert.not_equal(arr2, actual)
-            end)
-
-            it("case #" .. i .. ": supports curry", function()
-                local curriedActual = Array.concat(arr1)(arr2)
-
-                assert.same(expected, curriedActual)
-                assert.not_equal(arr1, curriedActual)
-                assert.not_equal(arr2, curriedActual)
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Array.concat(table.unpack(case.input))
+                assert.same(case.expected, actual)
+                assert.not_equal(actual, case.input[1])
+                assert.not_equal(actual, case.input[2])
             end)
         end
 
