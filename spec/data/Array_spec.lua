@@ -103,6 +103,55 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.deepCopy", function()
+
+        local function assertNestedCopied(arr1, arr2)
+            for i = 1, #arr1 do
+                local v1 = arr1[i]
+                local v2 = arr2[i]
+
+                if type(v1) == "table" then
+                    assert.not_equals(v1, v2, "table at index " .. i .. " was not deep copied")
+                    assertNestedCopied(v1, v2)
+                end
+            end
+        end
+
+        local cases = {
+            { "011", {}, {}, "empty array" },
+            { "012", { nil, "b" }, {}, "empty array with nil" },
+            { "021", { "a" }, { "a" }, "singleton array" },
+            { "022", { "a", nil, "c"}, { "a" }, "singleton array with nil" },
+            { "031", { 1, 2, 3 }, { 1, 2, 3 }, "array with no nils" },
+            { "041", { "a1", { "n1", "n2" } }, { "a1", { "n1", "n2" } }, "nested array" },
+            { "051", { 1, 2, nil }, { 1, 2 }, "array with trailing nil" },
+            { "061", { a = 1 }, {}, "map" },
+            { "071", { {} }, { {} }, "empty nested" },
+            { "081", { { "na" } }, { { "na"} }, "nested" },
+            { "082", { "a", { "na" } }, { "a", { "na" } }, "nested" }
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Array.deepCopy(case.input)
+                assert.same(case.expected, actual)
+                assert.not_equals(actual, case.input)
+                assertNestedCopied(actual, case.input)
+            end)
+        end
+
+        it ("works with circular nested", function()
+            local input = { "a1" }
+            table.insert(input, input)
+            local actual = Array.deepCopy(input)
+
+            assert.same(actual, input)
+        end)
+
+    end)
+
     describe("Array.equals", function()
 
         it("compare using ==", function()
