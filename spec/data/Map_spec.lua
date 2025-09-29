@@ -103,6 +103,27 @@ describe("p4lua.data.Map", function()
             end)
         end
 
+        describe("Map.copyShallow - non-table inputs", function()
+
+            local cases = {
+                { "number", 42 },
+                { "string", "hello" },
+                { "boolean true", true },
+                { "boolean false", false },
+                { "nil", nil },
+                { "function", function() return 1 end },
+            }
+
+            for _, case in ipairs(cases) do
+                local desc, input = table.unpack(case)
+
+                it(desc, function()
+                    local copy = Map.copyDeep(input)
+                    assert.equal(input, copy)
+                end)
+            end
+        end)
+
     end)
 
     describe("Map.delete", function()

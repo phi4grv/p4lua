@@ -41,6 +41,10 @@ pub.copyDeepOrId = function(arg)
 end
 
 pub.copyShallow = function(m)
+    if type(m) ~= "table" then
+        return m
+    end
+
     local copy = {}
 
     for k, v in pairs(m) do
