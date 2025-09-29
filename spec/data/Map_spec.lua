@@ -97,6 +97,14 @@ describe("p4lua.data.Map", function()
             end
         end)
 
+        it ("works with circular nested", function()
+            local input = { k = "v" }
+            input["nested"] = input
+            local actual = Map.deepCopy(input)
+
+            assert.same(actual, input)
+        end)
+
     end)
 
     describe("Map.equals", function()
