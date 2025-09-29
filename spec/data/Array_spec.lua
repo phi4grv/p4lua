@@ -103,7 +103,7 @@ describe("p4lua.data.Array", function()
 
     end)
 
-    describe("Array.deepCopy", function()
+    describe("Array.copyDeep", function()
 
         local function assertNestedCopied(arr1, arr2)
             for i = 1, #arr1 do
@@ -135,7 +135,7 @@ describe("p4lua.data.Array", function()
             local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
 
             it(("case #%s: %s"):format(case.id, case.desc), function()
-                local actual = Array.deepCopy(case.input)
+                local actual = Array.copyDeep(case.input)
                 assert.same(case.expected, actual)
                 assert.not_equals(actual, case.input)
                 assertNestedCopied(actual, case.input)
@@ -145,9 +145,39 @@ describe("p4lua.data.Array", function()
         it ("works with circular nested", function()
             local input = { "a1" }
             table.insert(input, input)
-            local actual = Array.deepCopy(input)
+            local actual = Array.copyDeep(input)
 
             assert.same(actual, input)
+        end)
+
+    end)
+
+    describe("Array.copyShallow", function()
+
+        local nested = { "nested" }
+        local cases = {
+            { "011", {}, {}, "empty array" },
+            { "012", { nil, "b" }, {}, "empty array with nil" },
+            { "021", { "a" }, { "a" }, "singleton array" },
+            { "022", { "a", nil, "c"}, { "a" }, "singleton array with nil" },
+            { "031", { 1, 2, 3 }, { 1, 2, 3 }, "array with no nils" },
+            { "041", { nested, 2 }, { nested, 2 }, "nested array reference" },
+            { "051", { 1, 2, nil }, { 1, 2 }, "array with trailing nil" },
+            { "061", { a = 1 }, {}, "map" },
+        }
+
+        local caseData = Array.fmap(Map.fromKeysAndValues({ "id", "data", "expected", "desc" }), cases)
+
+        ---@cast caseData table
+        for _, case in ipairs(caseData) do
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                assert.same(case.expected, Array.copyShallow(case.data))
+            end)
+        end
+
+        local case = caseData[6] -- TODO: local case = casefindById(caseData, "041")
+        it(("case #%s: %s: don't copy nested"):format(case.id, case.desc), function()
+            assert.equals(nested, case.data[1])
         end)
 
     end)
@@ -483,36 +513,6 @@ describe("p4lua.data.Array", function()
 
         it("counts up to the first nil in the sequence", function()
             assert.equal(1, Array.length({ 1, nil, 3 }))
-        end)
-
-    end)
-
-    describe("Array.shallowCopy", function()
-
-        local nested = { "nested" }
-        local cases = {
-            { "011", {}, {}, "empty array" },
-            { "012", { nil, "b" }, {}, "empty array with nil" },
-            { "021", { "a" }, { "a" }, "singleton array" },
-            { "022", { "a", nil, "c"}, { "a" }, "singleton array with nil" },
-            { "031", { 1, 2, 3 }, { 1, 2, 3 }, "array with no nils" },
-            { "041", { nested, 2 }, { nested, 2 }, "nested array reference" },
-            { "051", { 1, 2, nil }, { 1, 2 }, "array with trailing nil" },
-            { "061", { a = 1 }, {}, "map" },
-        }
-
-        local caseData = Array.fmap(Map.fromKeysAndValues({ "id", "data", "expected", "desc" }), cases)
-
-        ---@cast caseData table
-        for _, case in ipairs(caseData) do
-            it(("case #%s: %s"):format(case.id, case.desc), function()
-                assert.same(case.expected, Array.shallowCopy(case.data))
-            end)
-        end
-
-        local case = caseData[6] -- TODO: local case = casefindById(caseData, "041")
-        it(("case #%s: %s: don't copy nested"):format(case.id, case.desc), function()
-            assert.equals(nested, case.data[1])
         end)
 
     end)

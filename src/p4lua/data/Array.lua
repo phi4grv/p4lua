@@ -56,7 +56,7 @@ end
 
 pub.cons = p4fn.curry(2, cons)
 
-local function deepCopy(arr, seen)
+local function copyDeep(arr, seen)
     if seen[arr] then
         return seen[arr]
     end
@@ -68,7 +68,7 @@ local function deepCopy(arr, seen)
 
     while arr[i] ~= nil do
         if type(arr[i]) == "table" then
-            result[i] = deepCopy(arr[i], seen)
+            result[i] = copyDeep(arr[i], seen)
         else
             result[i] = arr[i]
         end
@@ -78,12 +78,24 @@ local function deepCopy(arr, seen)
     return result
 end
 
-pub.deepCopy = function(arr)
+pub.copyDeep = function(arr)
     if type(arr) ~= "table" then
         return arr
     end
 
-    return deepCopy(arr, {})
+    return copyDeep(arr, {})
+end
+
+pub.copyShallow = function(arr)
+    local result = {}
+    local i = 1
+
+    while arr[i] ~= nil do
+        result[i] = arr[i]
+        i = i + 1
+    end
+
+    return result
 end
 
 local function equalsWith(eq, arr1, arr2)
@@ -242,18 +254,6 @@ pub.length = function(arr)
     end
 
     return i - 1
-end
-
-pub.shallowCopy = function(arr)
-    local result = {}
-    local i = 1
-
-    while arr[i] ~= nil do
-        result[i] = arr[i]
-        i = i + 1
-    end
-
-    return result
 end
 
 local function snoc(v, arr)
