@@ -5,6 +5,51 @@ local Maybe = p4lua.requireLazy("p4lua.data.Maybe")
 
 local pub = {}
 
+local function copyDeep(m, seen)
+    if seen[m] then
+        return seen[m]
+    end
+
+    local copy = {}
+    seen[m] = copy
+
+    for k, v in pairs(m) do
+        if type(v) == "table" then
+            copy[k] = copyDeep(v, seen)
+        else
+            copy[k] = v
+        end
+    end
+
+    return copy
+end
+
+pub.copyDeep = function(m)
+    if type(m) ~= "table" then
+        return m
+    end
+
+    return copyDeep(m, {})
+end
+
+pub.copyDeepOrId = function(arg)
+    if type(arg) == "table" then
+        return copyDeep(arg, {})
+    end
+
+    return arg
+end
+
+pub.copyShallow = function(m)
+    local copy = {}
+
+    for k, v in pairs(m) do
+        copy[k] = v
+    end
+
+    return copy
+end
+
 local function delete(k, m)
     local result = {}
 
@@ -18,41 +63,6 @@ local function delete(k, m)
 end
 
 pub.delete = p4fn.curry(2, delete)
-
-local function deepCopy(m, seen)
-    if seen[m] then
-        return seen[m]
-    end
-
-    local copy = {}
-    seen[m] = copy
-
-    for k, v in pairs(m) do
-        if type(v) == "table" then
-            copy[k] = deepCopy(v, seen)
-        else
-            copy[k] = v
-        end
-    end
-
-    return copy
-end
-
-pub.deepCopy = function(m)
-    if type(m) ~= "table" then
-        return m
-    end
-
-    return deepCopy(m, {})
-end
-
-pub.deepCopyOrId = function(arg)
-    if type(arg) == "table" then
-        return deepCopy(arg, {})
-    end
-
-    return arg
-end
 
 pub.empty = function()
     return {}
@@ -155,16 +165,6 @@ pub.keys = function(m)
 end
 
 pub.lookup = p4fn.curry(2, lookup)
-
-pub.shallowCopy = function(m)
-    local copy = {}
-
-    for k, v in pairs(m) do
-        copy[k] = v
-    end
-
-    return copy
-end
 
 pub.size = function(m)
     local count = 0

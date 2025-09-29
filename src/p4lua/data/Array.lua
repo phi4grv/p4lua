@@ -156,7 +156,7 @@ local function foldl(ff, acc, arr)
     return acc
 end
 
-pub.foldl = p4fn.curry({ p4fn.id, Map.deepCopyOrId }, foldl)
+pub.foldl = p4fn.curry({ p4fn.id, Map.copyDeepOrId }, foldl)
 
 local function foldr(ff, acc, arr)
     local len = pub.length(arr)
@@ -168,7 +168,7 @@ local function foldr(ff, acc, arr)
     return acc
 end
 
-pub.foldr = p4fn.curry({ p4fn.id, Map.deepCopyOrId }, foldr)
+pub.foldr = p4fn.curry({ p4fn.id, Map.copyDeepOrId }, foldr)
 
 pub.fromVargs = function(...)
     local result = {}

@@ -22,9 +22,9 @@ describe("p4lua.data.Array.Mutable", function()
             local desc, arr1Org, arr2Org, expectedOrg = table.unpack(case)
 
             it("case #" .. i .. ": " .. desc, function()
-                local arr1 = Map.deepCopy(arr1Org)
-                local arr2 = Map.deepCopy(arr2Org)
-                local expected = Map.deepCopy(expectedOrg)
+                local arr1 = Map.copyDeep(arr1Org)
+                local arr2 = Map.copyDeep(arr2Org)
+                local expected = Map.copyDeep(expectedOrg)
 
                 local actual = MutableArray.appendInto(arr1, arr2)
 
@@ -33,9 +33,9 @@ describe("p4lua.data.Array.Mutable", function()
             end)
 
             it("case #" .. i .. " supports curry", function()
-                local arr1 = Map.deepCopy(arr1Org)
-                local arr2 = Map.deepCopy(arr2Org)
-                local expected = Map.deepCopy(expectedOrg)
+                local arr1 = Map.copyDeep(arr1Org)
+                local arr2 = Map.copyDeep(arr2Org)
+                local expected = Map.copyDeep(expectedOrg)
 
                 local actual = MutableArray.appendInto(arr1)(arr2)
 
@@ -63,9 +63,9 @@ describe("p4lua.data.Array.Mutable", function()
             local desc, arr1Org, arr2Org, expectedOrg = table.unpack(case)
 
             it("case #" .. i .. ": " .. desc, function()
-                local arr1 = Map.deepCopy(arr1Org)
-                local arr2 = Map.deepCopy(arr2Org)
-                local expected = Map.deepCopy(expectedOrg)
+                local arr1 = Map.copyDeep(arr1Org)
+                local arr2 = Map.copyDeep(arr2Org)
+                local expected = Map.copyDeep(expectedOrg)
 
                 local actual = MutableArray.prependInto(arr1, arr2)
 
@@ -74,9 +74,9 @@ describe("p4lua.data.Array.Mutable", function()
             end)
 
             it("case #" .. i .. " supports curry", function()
-                local arr1 = Map.deepCopy(arr1Org)
-                local arr2 = Map.deepCopy(arr2Org)
-                local expected = Map.deepCopy(expectedOrg)
+                local arr1 = Map.copyDeep(arr1Org)
+                local arr2 = Map.copyDeep(arr2Org)
+                local expected = Map.copyDeep(expectedOrg)
 
                 local actual = MutableArray.prependInto(arr1)(arr2)
 

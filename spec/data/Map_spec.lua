@@ -7,6 +7,104 @@ describe("p4lua.data.Map", function()
 
     local Map = require("p4lua.data.Map")
 
+    describe("Map.copyDeep", function()
+
+        local nested1 = { x = 10, y = { z = 20 } }
+        local nested2 = { a = 1, b = { c = 2, d = { e = 3 } } }
+
+        local cases = {
+            { "empty map", {}, {} },
+            { "flat map", { a = 1, b = 2, c = 3 }, { a = 1, b = 2, c = 3 } },
+            { "nested map", nested1, { x = 10, y = { z = 20 } } },
+            { "deep nested map", nested2, { a = 1, b = { c = 2, d = { e = 3 } } } },
+            { "array with nil", { 1, 2, nil, 4 }, { 1, 2, nil, 4 } },
+        }
+
+        for _, case in ipairs(cases) do
+            local desc, input, expected = table.unpack(case)
+
+            it(desc, function()
+                local copy = Map.copyDeep(input)
+
+                assert.not_equal(input, copy)
+                assert.same(expected, copy)
+
+                local function check_nested_different(t1, t2)
+                    for k, v in pairs(t1) do
+                        if type(v) == "table" then
+                            assert.not_equal(v, t2[k])
+                            check_nested_different(v, t2[k])
+                        end
+                    end
+                end
+
+                check_nested_different(input, copy)
+            end)
+        end
+
+        describe("Map.copyDeep - non-table inputs", function()
+
+            local cases = {
+                { "number", 42 },
+                { "string", "hello" },
+                { "boolean true", true },
+                { "boolean false", false },
+                { "nil", nil },
+                { "function", function() return 1 end },
+            }
+
+            for _, case in ipairs(cases) do
+                local desc, input = table.unpack(case)
+
+                it(desc, function()
+                    local copy = Map.copyDeep(input)
+                    assert.equal(input, copy)
+                end)
+            end
+        end)
+
+        it ("works with circular nested", function()
+            local input = { k = "v" }
+            input["nested"] = input
+            local actual = Map.copyDeep(input)
+
+            assert.same(actual, input)
+        end)
+
+    end)
+
+    describe("Map.copyShallow", function()
+
+        local nested = { x = 10 }
+        local cases = {
+            { "empty map", {} },
+            { "flat map", { a = 1, b = 2, c = 3 } },
+            { "nested map reference", { a = nested, b = 2 } },
+            { "array with no nils", { 1, 2, 3 } },
+            { "array starting with nil", { nil, 2, 3 } },
+            { "array with nil in middle", { 1, nil, 3 } },
+            { "array with trailing nils", { 1, 2, nil } },
+        }
+
+        for i, case in ipairs(cases) do
+            local desc, data = table.unpack(case)
+            it(desc, function()
+                local copy = Map.copyShallow(data)
+
+                assert.not_equal(data, copy)
+                assert.same(data, copy)
+
+                ---@cast data table
+                for k, v in pairs(data) do
+                    if type(v) == "table" then
+                        assert.equal(v, copy[k])
+                    end
+                end
+            end)
+        end
+
+    end)
+
     describe("Map.delete", function()
         it("removes an existing key from the map", function()
             local m = { a = 1, b = 2, c = 3 }
@@ -39,72 +137,6 @@ describe("p4lua.data.Map", function()
             assert.same({ a = 1, c = 3 }, actual)
             assert.same({ a = 1, b = 2, c = 3 }, m)
         end)
-    end)
-
-    describe("Map.deepCopy", function()
-
-        local nested1 = { x = 10, y = { z = 20 } }
-        local nested2 = { a = 1, b = { c = 2, d = { e = 3 } } }
-
-        local cases = {
-            { "empty map", {}, {} },
-            { "flat map", { a = 1, b = 2, c = 3 }, { a = 1, b = 2, c = 3 } },
-            { "nested map", nested1, { x = 10, y = { z = 20 } } },
-            { "deep nested map", nested2, { a = 1, b = { c = 2, d = { e = 3 } } } },
-            { "array with nil", { 1, 2, nil, 4 }, { 1, 2, nil, 4 } },
-        }
-
-        for _, case in ipairs(cases) do
-            local desc, input, expected = table.unpack(case)
-
-            it(desc, function()
-                local copy = Map.deepCopy(input)
-
-                assert.not_equal(input, copy)
-                assert.same(expected, copy)
-
-                local function check_nested_different(t1, t2)
-                    for k, v in pairs(t1) do
-                        if type(v) == "table" then
-                            assert.not_equal(v, t2[k])
-                            check_nested_different(v, t2[k])
-                        end
-                    end
-                end
-
-                check_nested_different(input, copy)
-            end)
-        end
-
-        describe("Map.deepCopy - non-table inputs", function()
-
-            local cases = {
-                { "number", 42 },
-                { "string", "hello" },
-                { "boolean true", true },
-                { "boolean false", false },
-                { "nil", nil },
-                { "function", function() return 1 end },
-            }
-
-            for _, case in ipairs(cases) do
-                local desc, input = table.unpack(case)
-
-                it(desc, function()
-                    local copy = Map.deepCopy(input)
-                    assert.equal(input, copy)
-                end)
-            end
-        end)
-
-        it ("works with circular nested", function()
-            local input = { k = "v" }
-            input["nested"] = input
-            local actual = Map.deepCopy(input)
-
-            assert.same(actual, input)
-        end)
-
     end)
 
     describe("Map.equals", function()
@@ -389,38 +421,6 @@ describe("p4lua.data.Map", function()
             local actual = Map.lookup("a")({ a = 99})
             assert.is_true(Maybe.equals(Maybe.Just(99), actual))
         end)
-
-    end)
-
-    describe("Map.shallowCopy", function()
-
-        local nested = { x = 10 }
-        local cases = {
-            { "empty map", {} },
-            { "flat map", { a = 1, b = 2, c = 3 } },
-            { "nested map reference", { a = nested, b = 2 } },
-            { "array with no nils", { 1, 2, 3 } },
-            { "array starting with nil", { nil, 2, 3 } },
-            { "array with nil in middle", { 1, nil, 3 } },
-            { "array with trailing nils", { 1, 2, nil } },
-        }
-
-        for i, case in ipairs(cases) do
-            local desc, data = table.unpack(case)
-            it(desc, function()
-                local copy = Map.shallowCopy(data)
-
-                assert.not_equal(data, copy)
-                assert.same(data, copy)
-
-                ---@cast data table
-                for k, v in pairs(data) do
-                    if type(v) == "table" then
-                        assert.equal(v, copy[k])
-                    end
-                end
-            end)
-        end
 
     end)
 

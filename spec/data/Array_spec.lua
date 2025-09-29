@@ -84,7 +84,7 @@ describe("p4lua.data.Array", function()
 
         for i, case in ipairs(cases) do
             local desc, value, arr, expected = table.unpack(case)
-            local arrCopy = Map.deepCopy(arr)
+            local arrCopy = Map.copyDeep(arr)
 
             it("case #" .. i .. ": " .. desc, function()
                 local actual = Array.cons(value, arr)
@@ -529,7 +529,7 @@ describe("p4lua.data.Array", function()
 
         for i, case in ipairs(cases) do
             local desc, value, arr, expected = table.unpack(case)
-            local arrCopy = Map.deepCopy(arr)
+            local arrCopy = Map.copyDeep(arr)
 
             it("case #" .. i .. ": " .. desc, function()
                 assert.same(expected, Array.snoc(value, arr))
