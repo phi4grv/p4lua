@@ -34,11 +34,30 @@ function! s:build(pkg_path) abort
     endif
 
     let l:target = fnamemodify(a:pkg_path, ':p') . 'target'
-    let l:luarocks_cmd = expand('~/local/bin/luajitrocks')
+
+    if exists('$LUAROCKS_CMD') && !empty($LUAROCKS_CMD)
+        let l:luarocks_cmd = expand($LUAROCKS_CMD)
+    else
+        let l:luarocks_cmd = 'luarocks'
+    endif
+
     let l:cmd = [l:luarocks_cmd, 'make', '--tree=' . l:target ]
+    let l:env = copy(environ())
+
+    if has_key(l:env, 'LUA_PATH')
+        let l:env['LUA_PATH'] = l:env['LUA_PATH'] .. ';' .. l:target . '/share/lua/5.1/?.lua'
+    else
+        let l:env['LUA_PATH'] = l:target . '/share/lua/5.1/?.lua;;'
+    endif
+    if has_key(l:env, 'LUA_CPATH')
+        let l:env['LUA_CPATH'] = l:env['LUA_CPATH'] .. ';' .. l:target . '/lib/lua/5.1/?.so'
+    else
+        let l:env['LUA_CPATH'] = l:target . '/lib/lua/5.1/?.so;;'
+    endif
 
     call jobstart(l:cmd, {
                 \ 'cwd': a:pkg_path,
+                \ 'env': l:env,
                 \ 'on_stdout': function('s:job_stdout'),
                 \ 'on_stderr': function('s:job_stderr'),
                 \ 'on_exit': { j, d, e -> s:job_build_exit(j, d, e, l:target, a:pkg_path) },
