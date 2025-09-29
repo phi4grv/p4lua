@@ -186,6 +186,22 @@ pub.fromVargs = function(...)
     return result
 end
 
+local function groupBy(keyf, arr)
+    local result = {}
+    local idx = 1
+
+    while(arr[idx] ~= nil) do
+        local key = keyf(arr[idx])
+        result[key] = result[key] or {}
+        table.insert(result[key], arr[idx])
+        idx = idx + 1
+    end
+
+    return result
+end
+
+pub.groupBy = p4fn.curry(2, groupBy)
+
 local function insert(i, v, arr)
     local result = {}
     local idx = 1

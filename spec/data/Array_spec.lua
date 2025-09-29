@@ -337,6 +337,36 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe("Array.groupBy", function()
+
+        local cases = {
+            {
+                "01",
+                {
+                    function(a) return a[1] end,
+                    { { "a1" }, { "a1", "b1" }, { "b1" } },
+                },
+                { a1 = { { "a1" }, { "a1", "b1" } }, b1 = { { "b1" } } },
+                "group by first item"
+            },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Array.groupBy(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+
+            it(("case #%s: supports curry"):format(case.id), function()
+                local actual = Array.groupBy(case.input[1])(case.input[2])
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
+
     describe("Array.insert", function()
 
         it("inserts into an empty array", function()
