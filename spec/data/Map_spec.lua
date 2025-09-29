@@ -1,4 +1,5 @@
 local assert = require("luassert")
+local Array = require("p4lua.data.Array")
 local Maybe = require("p4lua.data.Maybe")
 local Just = Maybe.Just
 local Nothing = Maybe.Nothing
@@ -460,6 +461,142 @@ describe("p4lua.data.Map", function()
             it(desc, function()
                 local result = Map.size(map)
                 assert.same(expected, result)
+            end)
+        end
+
+    end)
+
+    describe("Map.union", function()
+
+        local function assertTableNotCopied(dst, org, ovr)
+            for k, v in pairs(dst) do
+                if type(v) == "table" then
+                    src = ovr[k] or org[k]
+                    assert.equals(v, src, "table[" .. k .. "] was copied")
+                end
+            end
+        end
+
+        local cases = {
+            { "011", { {}, {} }, {}, "empty map" },
+            { "021", { { k1 = "v1" }, { k2 = "v2" } }, { k1 = "v1", k2 = "v2" }, "merge maps" },
+            { "022", { { k1 = {} }, { k2 = { "v2" } } }, { k1 = {}, k2 = { "v2" } }, "merge maps" },
+            { "031", { { k1 = { "v1" } }, { k1 = { "v2" } } }, { k1 = { "v2" } }, "merge maps only top level" },
+        }
+
+        for _, c in ipairs(cases) do
+            local case = { id = c[1], input = c[2], expected = c[3], desc = c[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Map.union(table.unpack(case.input))
+                assert.same(case.expected, actual)
+                assertTableNotCopied(actual, case.input[1], case.input[2])
+            end)
+        end
+
+    end)
+
+    describe("Map.unionCopy", function()
+
+        local function assertTableCopied(dst, org, ovr)
+            for k, v in pairs(dst) do
+                if type(v) == "table" then
+                    src = ovr[k] or org[k]
+                    assert.not_equals(v, src, "table[" .. k .. "] was not copied")
+                end
+            end
+        end
+
+        local cases = {
+            { "011", { {}, {} }, {}, "empty map" },
+            { "021", { { k1 = "v1" }, { k2 = "v2" } }, { k1 = "v1", k2 = "v2" }, "merge maps" },
+            { "022", { { k1 = {} }, { k2 = { "v2" } } }, { k1 = {}, k2 = { "v2" } }, "merge maps" },
+            { "031", { { k1 = { "v1" } }, { k1 = { "v2" } } }, { k1 = { "v2" } }, "merge maps only top level" },
+        }
+
+        for _, c in ipairs(cases) do
+            local case = { id = c[1], input = c[2], expected = c[3], desc = c[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Map.unionCopy(table.unpack(case.input))
+                assert.same(case.expected, actual)
+                assertTableCopied(actual, case.input[1], case.input[2])
+            end)
+        end
+
+    end)
+
+    describe("Map.unionWith", function()
+
+        local function assertTableNotCopied(dst, org, ovr)
+            for k, v in pairs(dst) do
+                if type(v) == "table" then
+                    if org[k] == nil or ovr[k] == nil then
+                        src = ovr[k] or org[k]
+                        assert.equals(v, src, "table[" .. k .. "] was copied")
+                    end
+                end
+            end
+        end
+
+        local strConcat = function(s1, s2, k)
+            return s1 .. s2 .. k
+        end
+        local arrConcat = function(a1, a2, k)
+            return Array.concat(a1, a2, { k })
+        end
+
+        local cases = {
+            { "011", { error, {}, {} }, {}, "empty map" },
+            { "021", { strConcat, { k1 = "v1", kx = { "vx" } }, { k1 = "v2" } }, { k1 = "v1v2k1", kx = { "vx" } }, "merge string" },
+            { "031", { arrConcat, { k1 = { "v1" } }, { k1 = { "v2" } } }, { k1 = { "v1", "v2", "k1" } }, "merge array" },
+        }
+
+        for _, c in ipairs(cases) do
+            local case = { id = c[1], input = c[2], expected = c[3], desc = c[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Map.unionWith(table.unpack(case.input))
+                assert.same(case.expected, actual)
+                assertTableNotCopied(actual, case.input[2], case.input[3])
+            end)
+        end
+
+    end)
+
+    describe("Map.unionCopyWith", function()
+
+        local function assertTableCopied(dst, org, ovr)
+            for k, v in pairs(dst) do
+                if type(v) == "table" then
+                    if org[k] == nil or ovr[k] == nil then
+                        src = ovr[k] or org[k]
+                        assert.not_equals(v, src, "table[" .. k .. "] was not copied")
+                    end
+                end
+            end
+        end
+
+        local strConcat = function(s1, s2, k)
+            return s1 .. s2 .. k
+        end
+        local arrConcat = function(a1, a2, k)
+            return Array.concat(a1, a2, { k })
+        end
+
+        local cases = {
+            { "011", { error, {}, {} }, {}, "empty map" },
+            { "021", { strConcat, { k1 = "v1", kx = { "vx" } }, { k1 = "v2" } }, { k1 = "v1v2k1", kx = { "vx" } }, "merge string" },
+            { "031", { arrConcat, { k1 = { "v1" } }, { k1 = { "v2" } } }, { k1 = { "v1", "v2", "k1" } }, "merge array" },
+        }
+
+        for _, c in ipairs(cases) do
+            local case = { id = c[1], input = c[2], expected = c[3], desc = c[4] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local actual = Map.unionCopyWith(table.unpack(case.input))
+                assert.same(case.expected, actual)
+                assertTableCopied(actual, case.input[2], case.input[3])
             end)
         end
 

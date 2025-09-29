@@ -180,6 +180,75 @@ pub.size = function(m)
     return count
 end
 
+pub.union = function(original, override)
+    local result = {}
+
+    for k, v in pairs(original) do
+        result[k] = v
+    end
+
+    for k, v in pairs(override) do
+        result[k] = v
+    end
+
+    return result
+end
+
+pub.unionCopy = function(original, override)
+    local result = {}
+
+    for k, v in pairs(original) do
+        if override[k] == nil then
+            result[k] = pub.copyDeep(v)
+        end
+    end
+
+    for k, v in pairs(override) do
+        result[k] = pub.copyDeep(v)
+    end
+
+    return result
+end
+
+pub.unionCopyWith = function(f, m1, m2)
+    local result = {}
+
+    for k, v in pairs(m1) do
+        if m2[k] == nil then
+            result[k] = pub.copyDeep(v)
+        end
+    end
+
+    for k, v in pairs(m2) do
+        if m1[k] ~= nil then
+            result[k] = f(m1[k], v, k)
+        else
+            result[k] = pub.deepCopy(v)
+        end
+    end
+
+    return result
+end
+
+pub.unionWith = function(f, m1, m2)
+    local result = {}
+
+    for k, v in pairs(m1) do
+        result[k] = v
+    end
+
+    for k, v in pairs(m2) do
+        local v1 = result[k]
+        if v1 ~= nil then
+            result[k] = f(v1, v, k)
+        else
+            result[k] = v
+        end
+    end
+
+    return result
+end
+
 pub.values = function(m)
     local result = {}
 
