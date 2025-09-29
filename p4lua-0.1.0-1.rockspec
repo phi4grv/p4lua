@@ -12,7 +12,8 @@ dependencies = {
    "lua >= 5.1, < 5.5",
 }
 build_dependencies = {
-   "inspect >= 3.1.0"
+   "inspect >= 3.1.0",
+   "p4lua_ext >= 0.1.1",
 }
 build = {
    type = "builtin",
