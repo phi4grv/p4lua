@@ -68,6 +68,14 @@ end
 
 pub.delete = p4fn.curry(2, delete)
 
+local function each(f, m)
+    for k, v in pairs(m) do
+        f(v, k, m)
+    end
+end
+
+pub.each = p4fn.curry(2, each)
+
 pub.empty = function()
     return {}
 end

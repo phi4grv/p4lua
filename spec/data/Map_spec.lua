@@ -1,4 +1,5 @@
 local assert = require("luassert")
+local spy = require("luassert.spy")
 local Array = require("p4lua.data.Array")
 local Maybe = require("p4lua.data.Maybe")
 local Just = Maybe.Just
@@ -160,6 +161,52 @@ describe("p4lua.data.Map", function()
             assert.same({ a = 1, b = 2, c = 3 }, m)
         end)
     end)
+
+    describe("Map.each", function()
+
+        local cases = {
+            { "01", {}, "empty" },
+            { "02", { "a" } , "array with 1 element" },
+            { "03", { nil }, "array starting nil" },
+            { "04", { nil, 2 }, "array starting nil" },
+            { "05", { 1, nil, 2 }, "array with middle nil" },
+            { "06", { 1, 2, nil }, "array ending nil" },
+            { "11", { k1 = "v1" }, "map with single element" },
+            { "12", { k1 = nil }, "map with nil value" },
+            { "13", { k1 = "v1", k2 = "v2" }, "map with 2 elements" },
+            { "14", { 1, k1 = "v1", 2, k2 = "v2" }, "mixed array and map" },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], desc = cv[3] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local s = spy.new(function(...) end)
+
+                Map.each(s, case.input)
+
+                local len = Map.size(case.input)
+                assert.spy(s).was.called(len)
+                for k, v in pairs(case.input) do
+                    assert.spy(s).was.called_with(v, k, case.input)
+                end
+            end)
+
+            it(("case #%s: supports curry"):format(case.id), function()
+                local s = spy.new(function(...) end)
+
+                Map.each(s)(case.input)
+
+                local len = Map.size(case.input)
+                assert.spy(s).was.called(len)
+                for k, v in pairs(case.input) do
+                    assert.spy(s).was.called_with(v, k, case.input)
+                end
+            end)
+        end
+
+    end)
+
 
     describe("Map.equals", function()
 
