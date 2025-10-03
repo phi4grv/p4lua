@@ -90,6 +90,17 @@ pub.copyShallow = function(arr)
     return result
 end
 
+local function each(f, arr)
+    local i = 1
+
+    while arr[i] ~= nil do
+        f(arr[i], i, arr)
+        i = i + 1
+    end
+end
+
+pub.each = p4fn.curry(2, each)
+
 local function equalsWith(eq, arr1, arr2)
     local i = 1
 

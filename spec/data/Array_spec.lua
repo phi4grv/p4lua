@@ -1,4 +1,5 @@
 local assert = require("luassert")
+local spy = require("luassert.spy")
 local Map = require("p4lua.data.Map")
 local Maybe = require("p4lua.data.Maybe")
 local Just = Maybe.Just
@@ -171,6 +172,47 @@ describe("p4lua.data.Array", function()
         it(("case #%s: %s: don't copy nested"):format(case.id, case.desc), function()
             assert.equals(nested, case.data[1])
         end)
+
+    end)
+
+    describe("Array.each", function()
+
+        local cases = {
+            { "01", {}, "empty array" },
+            { "02", { 10, 20, 30 }, "3 elements" },
+            { "03", { nil }, "array starting nil" },
+            { "04", { nil, 2 }, "array starting nil" },
+            { "05", { 1, nil, 2 }, "array with middle nil" },
+            { "06", { 1, 2, nil }, "array ending nil" },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], desc = cv[3] }
+
+            it(("case #%s: %s"):format(case.id, case.desc), function()
+                local s = spy.new(function(...) end)
+
+                Array.each(s, case.input)
+
+                local len = Array.length(case.input)
+                assert.spy(s).was.called(len)
+                for i = 1, len do
+                    assert.spy(s).was.called_with(case.input[i], i, case.input)
+                end
+            end)
+
+            it(("case #%s: supports curry"):format(case.id), function()
+                local s = spy.new(function(...) end)
+
+                Array.each(s)(case.input)
+
+                local len = Array.length(case.input)
+                assert.spy(s).was.called(len)
+                for i = 1, len do
+                    assert.spy(s).was.called_with(case.input[i], i, case.input)
+                end
+            end)
+        end
 
     end)
 
