@@ -1,6 +1,5 @@
 local assert = require("luassert")
 local spy = require("luassert.spy")
-local p4debug = require("p4lua.debug")
 
 describe("p4lua.data.Either", function()
 
