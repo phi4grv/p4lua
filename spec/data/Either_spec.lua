@@ -6,6 +6,45 @@ describe("p4lua.data.Either", function()
 
     local Either = require("p4lua.data.Either")
 
+    describe("Either.bind", function()
+
+        it("Right should apply function and return new Right", function()
+            local f = function(v) return Either.Right(v * 2) end
+            local r = Either.Right(10)
+
+            local actual = Either.bind(r, f)
+
+            assert.same(Either.Right(20), actual)
+        end)
+
+        it("Left should not apply function and return original Left", function()
+            local f = spy.new(function() end)
+            local l = Either.Left("left")
+
+            local actual = Either.bind(l, f)
+
+            assert.spy(f).was_not.called()
+            assert.same(Either.Left("left"), actual)
+        end)
+
+        it("bind chain works with multiple Rights", function()
+            local r1 = Either.Right(5)
+            local r2 = Either.bind(r1, function(v) return Either.Right(v + 3) end)
+            local r3 = Either.bind(r2, function(v) return Either.Right(v * 2) end)
+
+            assert.same(Either.Right(16), r3)
+        end)
+
+        it("bind short-circuits on Left", function()
+            local r1 = Either.Right(5)
+            local r2 = Either.bind(r1, function(v) return Either.Left("fail") end)
+            local r3 = Either.bind(r2, function(v) return Either.Right(v * 2) end)
+
+            assert.same(Either.Left("fail"), r3)
+        end)
+
+    end)
+
     describe("Either.match", function()
 
         it("Right should call right function once with correct value", function()
@@ -33,6 +72,6 @@ describe("p4lua.data.Either", function()
             assert.spy(leftSpy).was.called_with("error")
             assert.spy(rightSpy).was_not.called()
         end)
-
     end)
+
 end)
