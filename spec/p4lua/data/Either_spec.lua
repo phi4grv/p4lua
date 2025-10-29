@@ -44,6 +44,20 @@ describe("p4lua.data.Either", function()
 
     end)
 
+    describe("Either.fmap", function()
+
+        it("Right applies the function to the inner value", function()
+            local actual = Either.fmap(function(x) return x + 1 end, Either.Right(1))
+            assert.same(Either.Right(2), actual)
+        end)
+
+        it("Left returns the Left unchanged", function()
+            local actual = Either.fmap(function(x) return x + 1 end, Either.Left(1))
+            assert.same(Either.Left(1), actual)
+        end)
+
+    end)
+
     describe("Either.match", function()
 
         it("Right should call right function once with correct value", function()

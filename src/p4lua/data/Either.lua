@@ -18,4 +18,13 @@ pub.bind = function(e, f)
     }, e)
 end
 
+local function fmap(f, e)
+    return match({
+        Left = function(_) return e end,
+        Right = function(r) return Either.Right(f(r)) end
+    }, e)
+end
+
+pub.fmap = fmap
+
 return pub
