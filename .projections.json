@@ -1,0 +1,17 @@
+{
+    "src/*.lua": {
+        "alternate": "spec/{}_spec.lua"
+    },
+    "spec/*_spec.lua": {
+        "alternate": "src/{}.lua",
+        "dispatch": "./luarocks test -- {file|relative}",
+        "make": "./luarocks test --"
+    },
+    "*": {
+        "dispatch_compilers": {
+            "./luarocks": "",
+            "test": "busted"
+        },
+        "make": "./luarocks"
+    }
+}
