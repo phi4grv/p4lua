@@ -58,6 +58,24 @@ describe("p4lua.data.Either", function()
 
     end)
 
+    describe("isLeft", function()
+
+        it("returns true if Left is given, false otherwise", function()
+            assert.is_true(Either.isLeft(Either.Left("v")))
+            assert.is_false(Either.isLeft(Either.Right(true)))
+        end)
+
+    end)
+
+    describe("isRight", function()
+
+        it("returns true if Left is given, false otherwise", function()
+            assert.is_false(Either.isRight(Either.Left("v")))
+            assert.is_true(Either.isRight(Either.Right(true)))
+        end)
+
+    end)
+
     describe("Either.match", function()
 
         it("Right should call right function once with correct value", function()

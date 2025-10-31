@@ -1,4 +1,5 @@
 local adt = require("p4lua.adt")
+local p4fn = require("p4lua.fn")
 
 local pub = {}
 
@@ -26,5 +27,19 @@ local function fmap(f, e)
 end
 
 pub.fmap = fmap
+
+pub.isLeft = function(e)
+    return match({
+        Left = p4fn.const(true),
+        Right = p4fn.const(false)
+    }, e)
+end
+
+pub.isRight = function(e)
+    return match({
+        Left = p4fn.const(false),
+        Right = p4fn.const(true)
+    }, e)
+end
 
 return pub
