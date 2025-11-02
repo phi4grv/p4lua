@@ -31,6 +31,7 @@ build = {
       ["p4lua.data.Result"] = "src/p4lua/data/Result.lua",
       ["p4lua.debug"] = "src/p4lua/debug.lua",
       ["p4lua.fn"] = "src/p4lua/fn.lua",
+      ["p4lua.fs.path"] = "src/p4lua/fs/path.lua",
       ["p4lua.table"] = "src/p4lua/table.lua",
       ["p4lua.traits.Monad"] = "src/p4lua/traits/Monad.lua",
    }
