@@ -28,6 +28,20 @@ end
 
 pub.fmap = fmap
 
+pub.fromLeft = function(v, e)
+    return match({
+        Left = function(l) return l end,
+        Right = function(_) return v end
+    }, e)
+end
+
+pub.fromRight = function(v, e)
+    return match({
+        Left = function(_) return v end,
+        Right = function(r) return r end
+    }, e)
+end
+
 pub.isLeft = function(e)
     return match({
         Left = p4fn.const(true),

@@ -58,6 +58,34 @@ describe("p4lua.data.Either", function()
 
     end)
 
+    describe("fromLeft", function()
+
+        it("returns left value with Left", function()
+            local actual = Either.fromLeft("default", Either.Left("left"))
+            assert.same("left", actual)
+        end)
+
+        it("returns default value with Right", function()
+            local actual = Either.fromLeft("default", Either.Right("right"))
+            assert.same("default", actual)
+        end)
+
+    end)
+
+    describe("fromRight", function()
+
+        it("returns right value with Right", function()
+            local actual = Either.fromRight("default", Either.Right("right"))
+            assert.same("right", actual)
+        end)
+
+        it("returns default value with Left", function()
+            local actual = Either.fromRight("default", Either.Left("left"))
+            assert.same("default", actual)
+        end)
+
+    end)
+
     describe("isLeft", function()
 
         it("returns true if Left is given, false otherwise", function()
