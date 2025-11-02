@@ -5,6 +5,8 @@ local pub = {}
 
 pub.id = function(...) return ... end
 
+pub.eq = function(a, b) return a == b end
+
 pub.curry = function(arityOrHandlers, f)
     local arity
     local argHandlers

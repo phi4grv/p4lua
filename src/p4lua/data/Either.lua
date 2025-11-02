@@ -19,6 +19,32 @@ pub.bind = function(e, f)
     }, e)
 end
 
+local function equalsWith(eql, eqr, ea, eb)
+    return match({
+        Left = function(al)
+            return match({
+                Left = function(bl) return eql(al, bl) end,
+                Right = p4fn.const(false)
+            }, eb)
+        end,
+        Right = function(ar)
+            return match({
+                Left = p4fn.const(false),
+                Right = function(br) return eqr(ar, br) end,
+            }, eb)
+        end
+    }, ea)
+end
+
+pub.equalsWith = p4fn.curry(4, equalsWith)
+pub.equals = pub.equalsWith(p4fn.eq, p4fn.eq)
+pub.equalsRightWith = pub.equalsWith(p4fn.const(false))
+pub.equalsRight = pub.equalsWith(p4fn.const(false), p4fn.eq)
+pub.equalsLeftWith = function(eql, ea, eb)
+    return equalsWith(eql, p4fn.const(false), ea, eb)
+end
+pub.equalsLeft = pub.equalsLeftWith(p4fn.eq)
+
 local function fmap(f, e)
     return match({
         Left = function(_) return e end,

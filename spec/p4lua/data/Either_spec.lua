@@ -44,6 +44,97 @@ describe("p4lua.data.Either", function()
 
     end)
 
+    describe("equalsWith", function()
+        local eqlSpy = spy.new(function(a, b)
+            return a == b
+        end)
+        local eqrSpy = spy.new(function(a, b)
+            return a == b
+        end)
+
+        before_each(function()
+            eqlSpy:clear()
+            eqrSpy:clear()
+        end)
+
+        it("compares Left to Left", function()
+            local result = Either.equalsWith(eqlSpy, eqrSpy, Either.Left("left1"), Either.Left("left2"))
+
+            assert.is_false(result)
+            assert.spy(eqlSpy).was.called(1)
+            assert.spy(eqlSpy).was.called_with("left1", "left2")
+            assert.spy(eqrSpy).was.not_called(1)
+        end)
+
+        it("compares Left to Left", function()
+            local result = Either.equalsWith(eqlSpy, eqrSpy, Either.Left("left"), Either.Left("left"))
+
+            assert.is_true(result)
+            assert.spy(eqlSpy).was.called(1)
+            assert.spy(eqlSpy).was.called_with("left", "left")
+            assert.spy(eqrSpy).was.not_called(1)
+        end)
+
+        it("compares Right to Right", function()
+            local result = Either.equalsWith(eqlSpy, eqrSpy, Either.Right("right1"), Either.Right("right2"))
+
+            assert.is_false(result)
+            assert.spy(eqrSpy).was.called(1)
+            assert.spy(eqrSpy).was.called_with("right1", "right2")
+            assert.spy(eqlSpy).was.not_called(1)
+        end)
+
+        it("compares Right to Right", function()
+            local result = Either.equalsWith(eqlSpy, eqrSpy, Either.Right("right"), Either.Right("right"))
+
+            assert.is_true(result)
+            assert.spy(eqrSpy).was.called(1)
+            assert.spy(eqrSpy).was.called_with("right", "right")
+            assert.spy(eqlSpy).was.not_called(1)
+        end)
+
+        it("compares Left to Right", function()
+            local result = Either.equalsWith(eqlSpy, eqrSpy, Either.Left("any"), Either.Right("any"))
+
+            assert.is_false(result)
+            assert.spy(eqlSpy).was.not_called(1)
+            assert.spy(eqrSpy).was.not_called(1)
+        end)
+
+        it("compares Right to Left", function()
+            local result = Either.equalsWith(eqlSpy, eqrSpy, Either.Right("any"), Either.Left("any"))
+
+            assert.is_false(result)
+            assert.spy(eqlSpy).was.not_called(1)
+            assert.spy(eqrSpy).was.not_called(1)
+        end)
+
+        it("supports curry", function()
+            assert.is_true(Either.equalsWith(eqlSpy)(eqrSpy)(Either.Right("right"))(Either.Right("right")))
+            assert.is_true(Either.equalsWith(eqlSpy)(eqrSpy)(Either.Right("right"), Either.Right("right")))
+            assert.is_true(Either.equalsWith(eqlSpy, eqrSpy)(Either.Right("right"))(Either.Right("right")))
+            assert.is_true(Either.equalsWith(eqlSpy, eqrSpy)(Either.Right("right"), Either.Right("right")))
+            assert.is_true(Either.equalsWith(eqlSpy, eqrSpy, Either.Right("right"))(Either.Right("right")))
+       end)
+
+        describe("equalsLeftWith", function()
+
+            it("supports curry", function()
+                assert.is_true(Either.equalsLeftWith(eqlSpy)(Either.Left("left"))(Either.Left("left")))
+                assert.is_true(Either.equalsLeftWith(eqlSpy, Either.Left("left"))(Either.Left("left")))
+            end)
+
+        end)
+
+        describe("equalsLeft", function()
+
+            it("supports curry", function()
+                assert.is_true(Either.equalsLeft(Either.Left("left"))(Either.Left("left")))
+            end)
+
+        end)
+    end)
+
     describe("Either.fmap", function()
 
         it("Right applies the function to the inner value", function()
