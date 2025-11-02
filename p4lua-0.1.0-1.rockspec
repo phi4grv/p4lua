@@ -28,6 +28,7 @@ build = {
       ["p4lua.data.Map"] = "src/p4lua/data/Map.lua",
       ["p4lua.data.Map.Mutable"] = "src/p4lua/data/Map/Mutable.lua",
       ["p4lua.data.Maybe"] = "src/p4lua/data/Maybe.lua",
+      ["p4lua.data.Result"] = "src/p4lua/data/Result.lua",
       ["p4lua.debug"] = "src/p4lua/debug.lua",
       ["p4lua.fn"] = "src/p4lua/fn.lua",
       ["p4lua.table"] = "src/p4lua/table.lua",
