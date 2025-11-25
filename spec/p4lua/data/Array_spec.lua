@@ -2,6 +2,7 @@ local assert = require("luassert")
 local spy = require("luassert.spy")
 local Map = require("p4lua.data.Map")
 local Maybe = require("p4lua.data.Maybe")
+local String = require("p4lua.data.String")
 local Just = Maybe.Just
 local Nothing = Maybe.Nothing
 
@@ -36,6 +37,29 @@ describe("p4lua.data.Array", function()
             assert.same(Nothing, Array.at(2)(arr))
         end)
 
+    end)
+
+    describe(".bind", function()
+
+        local function add1(x) return { x + 1 } end
+        local function pair(x) return { x, x + 1 } end
+
+        local cases = {
+            { "01", { {} , add1 }, {} },
+            { "02", { { 1 } , add1 }, { 2 } },
+            { "03", { { 1, 2 } , add1 }, { 2, 3 } },
+            { "04", { { 1 } , pair }, { 1, 2 } },
+            { "05", { { 1, 2 } , pair }, { 1, 2, 2, 3 } },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Array.bind(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+        end
     end)
 
     describe("Array.concat", function()

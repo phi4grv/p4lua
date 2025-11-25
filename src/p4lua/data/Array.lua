@@ -20,6 +20,20 @@ end
 
 pub.at = p4fn.curry(2, at)
 
+pub.bind = function(arr, f)
+    local result = {}
+
+    pub.each(function(a)
+        local rs = f(a)
+        assert(type(rs) == "table", "Array.bind: function must return Array")
+        pub.each(function(r)
+            table.insert(result, r)
+        end, rs)
+    end, arr)
+
+    return result
+end
+
 pub.concat = function(...)
     local result = {}
 
