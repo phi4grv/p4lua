@@ -273,6 +273,23 @@ pub.length = function(arr)
     return i - 1
 end
 
+pub.product = function(xs, ...)
+    if select("#", ...) == 0 then
+        assert(xs ~= nil, "Array.product require parameter")
+        return pub.fmap(pub.pure, xs)
+    end
+
+    local subprod = pub.product(...)
+
+    return pub.bind(xs, function(x)
+        return pub.fmap(pub.cons(x), subprod)
+    end)
+end
+
+pub.pure = function(x)
+    return { x }
+end
+
 local function snoc(v, arr)
     local result = {}
     local i = 1

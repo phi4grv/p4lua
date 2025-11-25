@@ -575,6 +575,37 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe(".product", function()
+
+        local cases = {
+            { "01", { {} }, {}, "Single empty array returns one empty combination" },
+            { "02", { { 1 } }, { { 1 } }, "Single element array returns combination with that element" },
+            { "03", { {}, { 2 } }, {}, "First array is empty: no combinations possible" },
+            { "04", { { 1 }, {} }, {}, "Second array is empty: no combinations possible" },
+            { "05", { { 1 }, { 2 } }, { { 1, 2 } } },
+            { "06", { { 1, 2 } }, { { 1 }, { 2} } },
+            { "07", { { 1, 2 }, { 1, 2 } }, { { 1, 1 }, { 1, 2 }, { 2, 1 }, { 2, 2 } } },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Array.product(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
+
+    describe(".pure", function()
+
+        it("pure should wrap a single value into an Array", function()
+            assert.same({ 42 }, Array.pure(42))
+        end)
+
+    end)
+
     describe("Array.snoc", function()
 
         local cases = {
