@@ -57,12 +57,12 @@ describe("p4lua.fs.path", function()
     describe(".relativeTo", function()
 
         local cases = {
-            { "01", { "/absolute/common/a1/a2", "/absolute/common/b1/b2" }, Result.Ok("../b1/b2") },
-            { "02", { "/absolute/a1/a2", "/no/common/b1/b2" }, Result.Ok("../../no/common/b1/b2") },
-            { "03", { "/absolute/same/file", "/absolute/same/file" }, Result.Ok("file") },
+            { "01", { "/absolute/common/a1", "/absolute/common/b1/b2" }, Result.Ok("../b1/b2") },
+            { "02", { "/absolute/a1", "/no/common/b1/b2" }, Result.Ok("../../no/common/b1/b2") },
+            { "03", { "/absolute/same", "/absolute/same/file" }, Result.Ok("file") },
             { "04", { "/", "/absolute/file" }, Result.Ok("absolute/file") },
-            { "05", { "relative/a1/a2", "relative/b1/b2" }, Result.Ok("../b1/b2") },
-            { "06", { "relative/a1/a2", "no/common/b1/b2" }, Result.Ok("../../no/common/b1/b2") },
+            { "05", { "relative/a1", "relative/b1/b2" }, Result.Ok("../b1/b2") },
+            { "06", { "relative/a1", "no/common/b1/b2" }, Result.Ok("../../no/common/b1/b2") },
         }
 
         for _, cv in ipairs(cases) do
@@ -87,8 +87,8 @@ describe("p4lua.fs.path", function()
         end)
 
         it("handles empty to", function()
-            assert.same(Result.Ok(".."), path.relativeTo("relative/path", ""))
-            assert.same(Result.Ok(".."), path.relativeTo("relative/path", nil))
+            assert.same(Result.Ok("../.."), path.relativeTo("relative/path", ""))
+            assert.same(Result.Ok("../.."), path.relativeTo("relative/path", nil))
             assert.is_true(Result.isErr(path.relativeTo("/absolute/path", "")))
             assert.is_true(Result.isErr(path.relativeTo("/absolute/path", nil)))
         end)

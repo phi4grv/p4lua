@@ -73,9 +73,6 @@ local function relativeTo(from, to)
     local fromParts = splitPath(from)
     local toParts = splitPath(to)
 
-    -- Remove filename for 'from' (assume last part is file)
-    table.remove(fromParts)
-
     -- Find common prefix
     local i = 1
     while i <= #fromParts and i <= #toParts and fromParts[i] == toParts[i] do
