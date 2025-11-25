@@ -72,6 +72,15 @@ describe("p4lua.data.Result", function()
 
     end)
 
+    describe(".errs", function()
+
+        it("returns errs", function()
+            local actual = Result.errs({ Result.Ok("Ok"), Result.Err("Err") })
+            assert.same({ "Err" }, actual)
+        end)
+
+    end)
+
     describe("fromOk", function()
 
         it("returns right value with Ok", function()
@@ -133,4 +142,12 @@ describe("p4lua.data.Result", function()
         end)
     end)
 
+    describe(".oks", function()
+
+        it("returns oks", function()
+            local actual = Result.oks({ Result.Ok("Ok"), Result.Err("Err") })
+            assert.same({ "Ok" }, actual)
+        end)
+
+    end)
 end)

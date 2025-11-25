@@ -1,5 +1,7 @@
+local p4lua = require("p4lua")
 local adt = require("p4lua.adt")
 local p4fn = require("p4lua.fn")
+local Array = p4lua.requireLazy("p4lua.data.Array")
 
 local pub = {}
 
@@ -13,7 +15,7 @@ pub.Right = Either.Right
 pub.match = match
 
 pub.bind = function(e, f)
-    return pub.match({
+    return match({
         Left = function(_) return e end,
         Right = function(r) return f(r) end,
     }, e)
@@ -81,5 +83,23 @@ pub.isRight = function(e)
         Right = p4fn.const(true)
     }, e)
 end
+
+local leftsFolder = function(acc, item)
+    return match({
+        Left = function(l) return Array.snoc(l, acc) end,
+        Right = function(_) return acc end,
+    }, item)
+end
+
+local rightsFolder = function(acc, item)
+    return match({
+        Left = function(_) return acc end,
+        Right = function(r) return Array.snoc(r, acc) end,
+    }, item)
+end
+
+pub.lefts = Array.foldl(leftsFolder, {})
+
+pub.rights = Array.foldl(rightsFolder, {})
 
 return pub

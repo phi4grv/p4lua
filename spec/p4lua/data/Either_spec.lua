@@ -1,5 +1,6 @@
 local assert = require("luassert")
 local spy = require("luassert.spy")
+local String = require("p4lua.data.String")
 
 describe("p4lua.data.Either", function()
 
@@ -195,6 +196,28 @@ describe("p4lua.data.Either", function()
 
     end)
 
+    describe(".left", function()
+
+        local L, R = Either.Left, Either.Right
+
+        local cases = {
+            { "01", {}, {}, "Empty Array", },
+            { "03", { R("R1") }, {}, "Right only", },
+            { "02", { L("L1") }, { "L1" }, "Left only", },
+            { "04", { L("L1"), R("R1") }, { "L1" }, "Left, Right" },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Either.lefts(case.input)
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
+
     describe("Either.match", function()
 
         it("Right should call right function once with correct value", function()
@@ -222,6 +245,27 @@ describe("p4lua.data.Either", function()
             assert.spy(leftSpy).was.called_with("error")
             assert.spy(rightSpy).was_not.called()
         end)
+    end)
+
+    describe(".rights", function()
+
+        local L, R = Either.Left, Either.Right
+
+        local cases = {
+            { "01", {}, {}, "Empty Array", },
+            { "02", { L("L1") }, {}, "Left only", },
+            { "03", { R("R1") }, { "R1" }, "Right only", },
+            { "04", { L("L1"), R("R1") }, { "R1" }, "Left, Right" },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Either.rights(case.input)
+                assert.same(case.expected, actual)
+            end)
+        end
     end)
 
 end)

@@ -10,11 +10,13 @@ local pub = {
     equalsOk = Either.equalsOk,
     equalsErrWith = Either.equalsLeftWith,
     equalsErr = Either.equalsLeft,
+    errs = Either.lefts,
     fmap = Either.fmap,
     fromErr = Either.fromLeft,
     fromOk = Either.fromRight,
     isErr = Either.isLeft,
     isOk = Either.isRight,
+    oks = Either.rights,
 }
 
 pub.match =  function(branches, r)
