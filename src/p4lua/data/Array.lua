@@ -5,6 +5,15 @@ local Maybe = p4lua.requireLazy("p4lua.data.Maybe")
 
 local pub = {}
 
+pub.ap = function(...)
+    local prod = pub.product(...)
+
+    return pub.fmap(function(c)
+        local f = c[1]
+        return f(table.unpack(c, 2))
+    end, prod)
+end
+
 local function at(i, arr)
     local idx = 1
 

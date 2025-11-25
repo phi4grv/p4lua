@@ -10,6 +10,35 @@ describe("p4lua.data.Array", function()
 
     local Array = require("p4lua.data.Array")
 
+    describe(".ap", function()
+
+        local function add1(x) return x + 1 end
+        local function mul2(x) return x * 2 end
+        local function add(x, y) return x + y end
+        local function mul(x, y) return x * y end
+
+        local cases = {
+            { "01", { {}, {} }, {} },
+            { "02", { {}, { 1 } }, {} },
+            { "03", { { add1 }, {} }, {} },
+            { "04", { { add1 }, { 1 } }, { 2 } },
+            { "05", { { add1 }, { 1, 2 } }, { 2, 3 } },
+            { "06", { { add1, mul2 }, { 1, 2 } }, { 2, 3, 2, 4 } },
+            { "07", { { add1, mul2 }, { 1, 2 } }, { 2, 3, 2, 4 } },
+            { "10", { { add }, { 1 }, { 2 } }, { 3 } }
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Array.ap(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
+
     describe("Array.at", function()
 
         it("returns Just(value) for valid index", function()
