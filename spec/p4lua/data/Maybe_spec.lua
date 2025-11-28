@@ -1,10 +1,37 @@
 local assert = require("luassert")
 local spy = require("luassert.spy")
+local String = require("p4lua.data.String")
 
 describe("p4lua.data.Maybe", function()
 
     local Maybe = require("p4lua.data.Maybe")
-    local Just, Nothing = require("p4lua").require("p4lua.data.Maybe", { "Just", "Nothing" })
+    local Just, Nothing = Maybe.Just, Maybe.Nothing
+
+    describe(".ap", function()
+
+        local function add1(x) return x + 1 end
+        local function add(x, y) return x + y end
+
+        local cases = {
+            { "01", { Just(add1), Just(1) }, Just(2) },
+            { "02", { Nothing, Just(1) }, Nothing },
+            { "03", { Just(add1), Nothing }, Nothing },
+            { "04", { Just(add), Just(1), Just(2) }, Just(3) },
+            { "05", { Nothing, Just(1), Just(2) }, Nothing },
+            { "06", { Just(add), Nothing, Just(2) }, Nothing },
+            { "07", { Just(add), Just(1), Nothing }, Nothing },
+        }
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Maybe.ap(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
 
     describe("Maybe.catMaybes", function()
 

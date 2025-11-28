@@ -14,6 +14,30 @@ pub.Just = Maybe.Just
 pub.Nothing = Maybe.Nothing()
 pub.match = match
 
+pub.ap = function(mf, ...)
+    local margs = { ... }
+
+    return pub.match({
+        Just = function(f)
+            local args = {}
+            for i = 1, #margs do
+                local isJust = pub.match({
+                    Just = function(arg)
+                        args[#args+1] = arg
+                        return true
+                    end,
+                    Nothing = p4fn.const(false)
+                }, margs[i])
+                if not isJust then
+                    return pub.Nothing
+                end
+            end
+            return pub.Just(f(table.unpack(args)))
+        end,
+        Nothing = p4fn.const(pub.Nothing)
+    }, mf)
+end
+
 pub.bind = function(m, f)
     return pub.match({
         Just = function(x) return f(x) end,
