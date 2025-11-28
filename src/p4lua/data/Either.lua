@@ -14,6 +14,34 @@ pub.Left = Either.Left
 pub.Right = Either.Right
 pub.match = match
 
+pub.ap = function(mf, ...)
+    local margs = { ... }
+
+    return pub.match({
+        Right = function(f)
+            local args = {}
+            for i = 1, #margs do
+                local isLeft, leftVal = pub.match({
+                    Right = function(arg)
+                        args[#args + 1] = arg
+                        return false
+                    end,
+                    Left = function(l)
+                        return true, l
+                    end
+                }, margs[i])
+                if isLeft then
+                    return pub.Left(leftVal)
+                end
+            end
+            return pub.Right(f(table.unpack(args)))
+        end,
+        Left = function(l)
+            return pub.Left(l)
+        end
+    }, mf)
+end
+
 pub.bind = function(e, f)
     return match({
         Left = function(_) return e end,

@@ -5,6 +5,35 @@ local String = require("p4lua.data.String")
 describe("p4lua.data.Either", function()
 
     local Either = require("p4lua.data.Either")
+    local Left, Right = Either.Left, Either.Right
+
+    describe(".ap", function()
+
+        local function add1(x) return x + 1 end
+        local function add(x, y) return x + y end
+
+        ---@diagnostic disable: need-check-nil
+        local cases = {
+            { "01", { Right(add1), Right(1) }, Right(2) },
+            { "02", { Left("_"), Right(1) }, Left("_") },
+            { "03", { Right(add1), Left("_") }, Left("_") },
+            { "04", { Right(add), Right(1), Right(2) }, Right(3) },
+            { "05", { Left("_"), Right(1), Right(2) }, Left("_") },
+            { "06", { Right(add), Left("_"), Right(2) }, Left("_") },
+            { "07", { Right(add), Right(1), Left("_") }, Left("_") },
+        }
+        ---@diagnostic enable: need-check-nil
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Either.ap(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
 
     describe("Either.bind", function()
 

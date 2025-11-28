@@ -1,9 +1,39 @@
 local assert = require("luassert")
 local spy = require("luassert.spy")
+local String = require("p4lua.data.String")
 
 describe("p4lua.data.Result", function()
 
     local Result = require("p4lua.data.Result")
+    local Ok, Err = Result.Ok, Result.Err
+
+    describe(".ap", function()
+
+        local function add1(x) return x + 1 end
+        local function add(x, y) return x + y end
+
+        ---@diagnostic disable: need-check-nil
+        local cases = {
+            { "01", { Ok(add1), Ok(1) }, Ok(2) },
+            { "02", { Err("_"), Ok(1) }, Err("_") },
+            { "03", { Ok(add1), Err("_") }, Err("_") },
+            { "04", { Ok(add), Ok(1), Ok(2) }, Ok(3) },
+            { "05", { Err("_"), Ok(1), Ok(2) }, Err("_") },
+            { "06", { Ok(add), Err("_"), Ok(2) }, Err("_") },
+            { "07", { Ok(add), Ok(1), Err("_") }, Err("_") },
+        }
+        ---@diagnostic enable: need-check-nil
+
+        for _, cv in ipairs(cases) do
+            local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+            it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                local actual = Result.ap(table.unpack(case.input))
+                assert.same(case.expected, actual)
+            end)
+        end
+
+    end)
 
     describe("Result.bind", function()
 
@@ -147,6 +177,14 @@ describe("p4lua.data.Result", function()
         it("returns oks", function()
             local actual = Result.oks({ Result.Ok("Ok"), Result.Err("Err") })
             assert.same({ "Ok" }, actual)
+        end)
+
+    end)
+
+    describe(".pure", function()
+
+        it("pure should wrap a single value into a Right", function()
+            assert.same(Result.Ok("_"), Result.pure("_"))
         end)
 
     end)

@@ -3,6 +3,7 @@ local Either = require("p4lua.data.Either")
 local pub = {
     Err = Either.Left,
     Ok = Either.Right,
+    ap = Either.ap,
     bind = Either.bind,
     equalsWith = Either.equalsWith,
     equals = Either.equals,
@@ -17,6 +18,7 @@ local pub = {
     isErr = Either.isLeft,
     isOk = Either.isRight,
     oks = Either.rights,
+    pure = Either.pure,
 }
 
 pub.match =  function(branches, r)
