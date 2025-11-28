@@ -290,4 +290,12 @@ describe("p4lua.data.Maybe", function()
         end)
 
     end)
+
+    describe(".pure", function()
+
+        it("pure should wrap a single value into a Just", function()
+            assert.same(Just(42), Maybe.pure(42))
+        end)
+
+    end)
 end)

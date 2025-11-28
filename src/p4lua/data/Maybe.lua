@@ -84,4 +84,8 @@ pub.mapMaybe = function(f, arr)
     end, {}, arr)
 end
 
+pub.pure = function(x)
+    return pub.Just(x)
+end
+
 return pub
