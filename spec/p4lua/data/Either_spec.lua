@@ -247,6 +247,14 @@ describe("p4lua.data.Either", function()
         end)
     end)
 
+    describe(".pure", function()
+
+        it("pure should wrap a single value into a Right", function()
+            assert.same(Either.Right("_"), Either.pure("_"))
+        end)
+
+    end)
+
     describe(".rights", function()
 
         local L, R = Either.Left, Either.Right

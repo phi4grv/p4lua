@@ -91,6 +91,10 @@ local leftsFolder = function(acc, item)
     }, item)
 end
 
+pub.pure = function(x)
+    return pub.Right(x)
+end
+
 local rightsFolder = function(acc, item)
     return match({
         Left = function(_) return acc end,
