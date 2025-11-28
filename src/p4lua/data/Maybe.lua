@@ -70,6 +70,20 @@ pub.fromMaybe = function(default, m)
     }, m)
 end
 
+pub.isJust = function(e)
+    return match({
+        Just = p4fn.const(true),
+        Nothing = p4fn.const(false)
+    }, e)
+end
+
+pub.isNothing = function(e)
+    return match({
+        Just = p4fn.const(false),
+        Nothing = p4fn.const(true)
+    }, e)
+end
+
 pub.mapMaybe = function(f, arr)
     return Array.foldl(function(acc, a)
         return match({

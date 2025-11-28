@@ -125,6 +125,24 @@ describe("p4lua.data.Maybe", function()
         end)
     end)
 
+    describe(".isJust", function()
+
+        it("returns true if Just is given, false otherwise", function()
+            assert.is_true(Maybe.isJust(Maybe.Just("_")))
+            assert.is_false(Maybe.isJust(Maybe.Nothing))
+        end)
+
+    end)
+
+    describe("isNothing", function()
+
+        it("returns true if Nothing is given, false otherwise", function()
+            assert.is_true(Maybe.isNothing(Maybe.Nothing))
+            assert.is_false(Maybe.isNothing(Maybe.Just("_")))
+        end)
+
+    end)
+
     describe("Maybe.mapMaybe", function()
 
         local f = function(x)
