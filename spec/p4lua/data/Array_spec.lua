@@ -665,6 +665,74 @@ describe("p4lua.data.Array", function()
 
     end)
 
+    describe(".sequence", function()
+
+       describe("works with Maybe", function()
+
+            local cases = {
+                { "01", {}, Just({}) },
+                { "02", { Just(1) }, Just({ 1 }) },
+                { "03", { Just(1), Just(2) }, Just({ 1, 2 }) },
+                { "03", { Just(1), Just(2), Just(3) }, Just({ 1, 2, 3 }) },
+                { "10", { Nothing }, Nothing },
+                { "11", { Just(1), Nothing }, Nothing },
+                { "12", { Nothing, Just(1) }, Nothing },
+                { "13", { Nothing, Just(1), Just(2) }, Nothing },
+                { "14", { Just(1), Nothing, Just(2) }, Nothing },
+                { "15", { Just(1), Just(2), Nothing }, Nothing },
+            }
+
+            for _, cv in ipairs(cases) do
+                local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+                it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                    local actual = Array.sequence(Maybe, case.input)
+                    assert.same(case.expected, actual)
+                end)
+            end
+
+        end)
+
+       describe("works with Either", function()
+
+            local Either = require("p4lua.data.Either")
+            local Left, Right = Either.Left, Either.Right
+
+            local cases = {
+                { "01", {}, Right({}) },
+                { "02", { Right(1) }, Right({ 1 }) },
+                { "03", { Right(1), Right(2) }, Right({ 1, 2 }) },
+                { "03", { Right(1), Right(2), Right(3) }, Right({ 1, 2, 3 }) },
+                { "10", { Left(1) }, Left(1) },
+                { "11", { Right(1), Left(1) }, Left(1) },
+                { "12", { Left(1), Right(1) }, Left(1) },
+                { "13", { Left(1), Right(1), Right(2) }, Left(1) },
+                { "14", { Right(1), Left(1), Right(2) }, Left(1) },
+                { "15", { Right(1), Right(2), Left(1) }, Left(1) },
+                { "20", { Left(1), Left(2) }, Left(1), "returns first Left" },
+                { "21", { Right(1), Left(1), Left(2) }, Left(1) },
+                { "23", { Left(1), Right(1), Left(2) }, Left(1) },
+                { "24", { Left(1), Left(2), Right(1) }, Left(1) },
+            }
+
+            for _, cv in ipairs(cases) do
+                local case = { id = cv[1], input = cv[2], expected = cv[3], desc = cv[4] }
+
+                it(("case #%s%s"):format(case.id, String.optPrefix(": ", case.desc)), function()
+                    local actual = Array.sequence(Either, case.input)
+                    assert.same(case.expected, actual)
+                end)
+            end
+
+        end)
+
+        it("support curry", function()
+            local actual = Array.sequence(Maybe)({ Just(1) })
+            assert.same(Just({ 1 }), actual)
+        end)
+
+    end)
+
     describe("p4lua.data.Array.vpairs", function()
 
         local cases = {

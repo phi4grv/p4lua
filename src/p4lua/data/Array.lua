@@ -299,6 +299,18 @@ pub.pure = function(x)
     return { x }
 end
 
+local function sequence(Applicative, arr)
+    local f = function(...)
+        return { ... }
+    end
+
+    local mf = Applicative.pure(f)
+
+    return Applicative.ap(mf, table.unpack(arr))
+end
+
+pub.sequence = p4fn.curry(2, sequence)
+
 local function snoc(v, arr)
     local result = {}
     local i = 1
